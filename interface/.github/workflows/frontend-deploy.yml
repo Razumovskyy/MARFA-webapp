@@ -1,0 +1,36 @@
+name: Marfa Frontend Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm install
+      - run: npm run build
+        env:
+          CI: false
+          NODE_OPTIONS: "--max_old_space_size=8192"
+      - name: Creating SSH key and establishing SSH tunnel
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "$(ssh-keyscan -p ${PORT} ${IP})" >> ~/.ssh/known_hosts
+          sleep 5
+          ssh -p ${PORT} ${USER}@${IP} "rm -rf /var/www/marfa-spectra.com/html/*"
+          scp -P ${PORT} -r ./out/* ${USER}@${IP}:/var/www/marfa-spectra.com/html/
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          USER: ${{ secrets.USER }}
+          IP: ${{ secrets.IP }}
+          PORT: ${{ secrets.PORT }}
+

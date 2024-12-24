@@ -1,0 +1,1 @@
+export const baseUrl = "https://marfa-spectra.com/api/v1/"
