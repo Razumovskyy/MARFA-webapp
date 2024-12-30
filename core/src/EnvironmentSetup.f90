@@ -6,26 +6,26 @@ module EnvironmentSetup
     
     ! Input command line arguments and their trimmed values as strings !
     integer :: argc ! number of the passed command line arguments
-    character(len=20) :: databaseSlug
     character(len=10) :: inputMolecule   
+    character(len=20) :: databaseSlug
     character(len=10) :: startWVcla, endWVcla, startWVclaTrimmed, endWVclaTrimmed
     character(len=10) :: cutOffcla, cutOffclaTrimmed
+    character(len=10) :: inputPressurecla, inputTemperaturecla, inputNumberDensityCla
+    character(len=10) :: inputPressureClaTrimmed, inputTemperatureClaTrimmed, inputNumberDensityClaTrimmed
+    real :: inputPressure, inputTemperature, inputNumberDenisty
     character(len=30) :: targetValue, targetValuecla
+    character(len=10) :: uuid
+    logical :: isUUID
 
     ! Parameters and variables for constructing directories names !
-    character(len=200), parameter :: rootDirName = 'output'
-    character(len=300) :: subDirName
+    character(len=200) :: rootDirName
     character(len=100) :: formattedStartWV, formattedEndWV
     character(len=200) :: parentDir
     character(len=300) :: fullSubDirPath
-    character(len=500) :: mkdirCommand
     character(len=300) :: infoFilePath
     character(len=300) :: latestRunFilePath
     integer, parameter :: infoUnit = 67
     integer, parameter :: latestRunUnit = 87
-    character(len=20) :: timestamp ! 
-    integer :: dateTimeValues(8)
-    integer :: year, month, day, hour, minute, second
     integer :: status
 
 contains
@@ -37,24 +37,6 @@ contains
 
         ! Get a number of command-line arguments
         argc = command_argument_count()
-
-        ! Check if the number of arguments is not sufficient
-        if (argc < 7) then
-            print *, 'Insufficient number of arguments.'
-            print *, 'Expected at least 8 arguments, but received ', argc
-            print *, 'Usage: marfa Molecule StartWV EndWV DatabaseSlug & 
-                        CutOff ChiFactorFuncName TargetValue AtmProfileFile'
-            print *, 'Molecule: CO2, H2O'
-            print *, 'StartWV: 10 - 20000'
-            print *, 'EndWV: 10 - 20000, and greater than StartWV'
-            print *, 'DatabaseSlug: basefilenames from the data/databases folder'
-            print *, 'CutOff: integer value of a line cutoff condition in cm-1'
-            print *, 'TargetValue: ACS (for cross-section in cm^2/molecule) or &
-                        VAC (for volume absorption coefficient in km-1)'
-            stop 1
-        end if
-
-        !------------------------------------------------------------------------------------------------------------------!
 
         ! Establishing input parameters based on command line arguments
         do l = 1, command_argument_count()
@@ -76,6 +58,18 @@ contains
                 cutOffclaTrimmed = trim(cutOffcla)
                 read(cutOffclaTrimmed, *) cutOff
             case (6)
+                call get_command_argument(l, inputPressurecla)
+                inputPressureClaTrimmed = trim(inputPressurecla)
+                read(inputPressureClaTrimmed, *) inputPressure
+            case(7)
+                call get_command_argument(l, inputTemperaturecla)
+                inputTemperatureClaTrimmed = trim(inputTemperaturecla)
+                read(inputTemperatureClaTrimmed, *) inputTemperature
+            case(8)
+                call get_command_argument(l, inputNumberDensityCla)
+                inputNumberDensityClaTrimmed = trim(inputNumberDensityCla)
+                read(inputNumberDensityClaTrimmed, *) inputNumberDenisty
+            case (9)
                 call get_command_argument(l, targetValuecla)
                 ! Set ACS or VAC with validation
                 targetValue = trim(targetValuecla)
@@ -88,8 +82,9 @@ contains
                                 "VAC" (Volume absorption coefficient).'
                     stop 2
                 end select
-            case (7)
-                call get_command_argument(l, atmProfileFile)
+            case (10)
+                call get_command_argument(l, uuid)
+                isUUID = .true.
             end select
         end do
     end subroutine readCommandLineArguments
@@ -97,43 +92,17 @@ contains
     
     subroutine initialiseDirectories()
         implicit none
-        ! Directory where the PT-tables are stored is generated automatcally and contains a timestamp in its name
-        call date_and_time(values=dateTimeValues)
-        year = dateTimeValues(1)
-        month = dateTimeValues(2)
-        day = dateTimeValues(3)
-        hour = dateTimeValues(5)
-        minute = dateTimeValues(6)
-        second = dateTimeValues(7)
-        write(timestamp, '(I4, I2.2, I2.2, "_", I2.2, I2.2, I2.2, I2.2)') & 
-                            year, month, day, hour, minute, second
-        
-        ! Format numeric parameters to remove decimal points and convert to integers
-        write(formattedStartWV, '(I0)') int(startWV)
-        write(formattedEndWV, '(I0)') int(endWV)
 
-        ! Assemble a subdirectory name: Molecule_StartWV-EndWV_Timestamp, absolute and relative paths
-        subDirName = trim(inputMolecule) // "_" // trim(formattedStartWV) // "-" //&
-                        trim(formattedEndWV) // "_" // trim(timestamp)
-        parentDir = trim(adjustl(rootDirName)) // "/ptTables/"
-        fullSubDirPath = trim(adjustl(parentDir)) // trim(adjustl(subDirName))
-        
-        ! Running a makedir command to create directories
-        mkdirCommand = 'mkdir "' // trim(fullSubDirPath) // '"'
-        call execute_command_line(mkdirCommand, wait=.true., exitstat=status)
-        if (status /= 0) then
-            print *, "Error: Failed to create directory ", trim(fullSubDirPath)
-            stop 3
-        else
-            print *, "Directory for storing PT-tables is created: ", trim(fullSubDirPath)
-        end if
+        rootDirName = 'users' // "/" // uuid ! users/<uuid>/
+        fullSubDirPath = trim(adjustl(rootDirName))  ! users/<uuid>/
+
     end subroutine initialiseDirectories
         
 
     subroutine initialiseLogFiles
         implicit none
         ! Establishing technical infoFile for storin information about the parameters of the run
-        infoFilePath = trim(fullSubDirPath) // '/info.txt'
+        infoFilePath = trim(fullSubDirPath) // 'info.txt' ! users/<uui>/info.txt
         open(infoUnit, file=infoFilePath, status='replace', action='write', iostat=status)
 
         if (status /= 0) then
@@ -143,26 +112,18 @@ contains
 
         ! Write command-line arguments to the info file
         write(infoUnit, '(A)') 'Command-Line Arguments:'
+        write(infoUnit, '(A,A)') 'Request UUID: ', uuid
         write(infoUnit, '(A,A)') 'Input Molecule: ', trim(inputMolecule)
         write(infoUnit, '(A,A)') 'Start Wavenumber: ', trim(startWVclaTrimmed)
         write(infoUnit, '(A,A)') 'End Wavenumber: ', trim(endWVclaTrimmed)
+        write(infoUnit, '(A,A)') 'Database: ', databaseSlug
         write(infoUnit, '(A,A)') 'Cut Off: ', trim(cutOffclaTrimmed)
-        write(infoUnit, '(A,A)') 'Chi Factor Function Name: ', trim(chiFactorFuncName)
-        write(infoUnit, '(A,A)') 'Target Value: ', trim(targetValue)
-        write(infoUnit, '(A,A)') 'Atmospheric Profile File: ', trim(atmProfileFile)
+        write(infoUnit, '(A,A)') 'Pressure (atm): ', pressure
+        write(infoUnit, '(A,A)') 'Temperature (K): ', temperature
+        write(infoUnit, '(A,A)') 'Number density (cm^{-2}*km^{-1}): ', density
+        write(infoUnit, '(A,A)') 'Target value: ', targetValue
         close(infoUnit)
-        print *, "Info file created at: ", trim(infoFilePath)
 
-        ! Storing information about the time of a last calculation (needed for python scripts to save the processed data and plots)
-        latestRunFilePath = trim(adjustl(parentDir)) // 'latest_run.txt'
-        open(unit=latestRunUnit, file=trim(latestRunFilePath), &
-                    status='replace', action='write', iostat=status)
-        if (status /= 0) then
-            print *, "Error: Unable to create latest run file at ", trim(latestRunFilePath)
-            stop 5
-        end if
-        write(latestRunUnit, '(A)') subDirName
-        close(latestRunUnit)
     end subroutine initialiseLogFiles
 
 
