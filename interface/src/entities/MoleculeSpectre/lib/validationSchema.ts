@@ -24,6 +24,6 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
 export const chartSpectreValidationSchema = yup.object().shape({
   v1: yup.number().required("Enter a number").typeError("Enter a number"),
   v2: yup.number().required("Enter a number").typeError("Enter a number"),
-  resolution: yup.string().required("Хуй по фазе").typeError("Говнецо"),
+  resolution: yup.string().required("").typeError(""),
   level: yup.number().required("Enter a number").typeError("Enter a number")
 })
