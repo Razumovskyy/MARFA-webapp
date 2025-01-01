@@ -1,12 +1,5 @@
 #!/bin/bash
 
-CURRENT_DIR=$(basename "$PWD")
-
-if [ "$CURRENT_DIR" != "MARFA" ]; then
-  echo "Error: This script must be run from the MARFA directory."
-  exit 1
-fi
-
 prompt_user() {
   local action_desc="$1"
   local command="$2"
