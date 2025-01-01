@@ -5,12 +5,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from atmo_spectres.models import Spectre
-from atmo_spectres.serializers import SpectreSerializer, ProcessDataSerializer
+from spectres.models import Spectre
+from spectres.serializers import SpectreSerializer, ProcessDataSerializer
 import subprocess
 import os
 
-from markbackend.settings import calculating_static, atmospheres_static, CURRENT_HOST, MEDIA_ROOT
+from marfa_app.settings import calculating_static, atmospheres_static, CURRENT_HOST, MEDIA_ROOT
 
 
 class SpectreView(APIView):

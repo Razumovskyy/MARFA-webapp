@@ -1,4 +1,4 @@
-from atmo_spectres.models import Spectre
+from spectres.models import Spectre
 
 from rest_framework import serializers
 
