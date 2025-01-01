@@ -22,40 +22,5 @@ module Atmosphere
     
     ! Technical variables
     integer :: ios
-    integer :: levelsIdx ! loop index
 
-contains
-
-    subroutine readAtmosphericParameters()
-        
-        fullNameAtmProfile = 'data/Atmospheres/'//atmProfileFile
-
-        ! Reading the header of the atmospheric file: atmTitle, levels !
-        open(atmProfileUnit, file=fullNameAtmProfile, status='old')
-        read(atmProfileUnit, '(A20)') atmTitle
-        read(atmProfileUnit, *) levels
-        if (levels > 200) then
-            write(*, '(A, I3, A)') 'WARNING: input number of atmospheric levels is &
-                                    bigger than ', levelsThreshold
-            stop 6
-        end if
-
-        ! Allocation and population of arrays for macroscopic parameters !
-        allocate(heightArray(levels))
-        allocate(pressureArray(levels))
-        allocate(temperatureArray(levels))
-        allocate(densityArray(levels))
-        do levelsIdx = 1, levels
-            read(atmProfileUnit, *, iostat=ios) heightArray(levelsIdx), pressureArray(levelsIdx), &
-            temperatureArray(levelsIdx), densityArray(levelsIdx)
-            if (ios /= 0) then
-                print *, 'Error: Unable to read data from file "', trim(fullNameAtmProfile), '".'
-                print *, 'Check the data format in the atmospheric file'
-                close(atmProfileUnit)
-                stop 7
-            end if
-        end do
-        close(atmProfileUnit)
-
-    end subroutine readAtmosphericParameters
 end module Atmosphere

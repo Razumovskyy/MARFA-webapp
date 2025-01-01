@@ -60,15 +60,15 @@ contains
             case (6)
                 call get_command_argument(l, inputPressurecla)
                 inputPressureClaTrimmed = trim(inputPressurecla)
-                read(inputPressureClaTrimmed, *) inputPressure
+                read(inputPressureClaTrimmed, *) pressure
             case(7)
                 call get_command_argument(l, inputTemperaturecla)
                 inputTemperatureClaTrimmed = trim(inputTemperaturecla)
-                read(inputTemperatureClaTrimmed, *) inputTemperature
+                read(inputTemperatureClaTrimmed, *) temperature
             case(8)
                 call get_command_argument(l, inputNumberDensityCla)
                 inputNumberDensityClaTrimmed = trim(inputNumberDensityCla)
-                read(inputNumberDensityClaTrimmed, *) inputNumberDenisty
+                read(inputNumberDensityClaTrimmed, *) density
             case (9)
                 call get_command_argument(l, targetValuecla)
                 ! Set ACS or VAC with validation
@@ -93,7 +93,7 @@ contains
     subroutine initialiseDirectories()
         implicit none
 
-        rootDirName = 'users' // "/" // uuid ! users/<uuid>/
+        rootDirName = ".." // "/" // "media" // "/" // "users" // "/" // trim(adjustl(uuid)) // "/" ! users/<uuid>/
         fullSubDirPath = trim(adjustl(rootDirName))  ! users/<uuid>/
 
     end subroutine initialiseDirectories
@@ -111,19 +111,22 @@ contains
         end if
 
         ! Write command-line arguments to the info file
-        write(infoUnit, '(A)') 'Command-Line Arguments:'
+        select case (targetValue)
+        case ('VAC')
+            write(infoUnit, '(A,A)') 'Target value of calculation: ', 'Volume absorption coefficient (km^-1)'
+        case ('ACS')
+            write(infoUnit, '(A,A)') 'Target value of calculation: ', 'Absorption cross-section (cm^2)'
+        end select
         write(infoUnit, '(A,A)') 'Request UUID: ', uuid
         write(infoUnit, '(A,A)') 'Input Molecule: ', trim(inputMolecule)
         write(infoUnit, '(A,A)') 'Start Wavenumber: ', trim(startWVclaTrimmed)
         write(infoUnit, '(A,A)') 'End Wavenumber: ', trim(endWVclaTrimmed)
         write(infoUnit, '(A,A)') 'Database: ', databaseSlug
         write(infoUnit, '(A,A)') 'Cut Off: ', trim(cutOffclaTrimmed)
-        write(infoUnit, '(A,A)') 'Pressure (atm): ', pressure
-        write(infoUnit, '(A,A)') 'Temperature (K): ', temperature
-        write(infoUnit, '(A,A)') 'Number density (cm^{-2}*km^{-1}): ', density
-        write(infoUnit, '(A,A)') 'Target value: ', targetValue
+        write(infoUnit, '(A,E12.5)') 'Pressure (atm): ', pressure
+        write(infoUnit, '(A,F6.2)') 'Temperature (K): ', temperature
+        write(infoUnit, '(A,E12.5)') 'Number density (cm^{-2}*km^{-1}): ', density
         close(infoUnit)
-
     end subroutine initialiseLogFiles
 
 

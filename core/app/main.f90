@@ -40,9 +40,6 @@ program main
 
     integer :: linesNumber
 
-    
-    ! Start a timer to track the machine time
-    call cpu_time(startTime)
 
     call readCommandLineArguments()
     ! call readAtmosphericParameters()
@@ -79,10 +76,7 @@ program main
     ! print *, 'Number of spectral lines to be considered: ', linesNumber
     
     ! Initializing the pressure (total), temperature and density (of the species) at current atm level
-    pressure = inputPressure
-    temperature = inputTemperature
-    density = inputNumberDenisty
-    
+
     ! Alternative -- using Ideal gas law and normalization on 1 atm pressure
     ! Attention: density is a number denisty in units: 1/(cm^2 * km); 1/(cm^2*km) = 10/m^3
     pSelf = density * 10. * BOLsi * temperature / standardAtmosphericPressure
@@ -90,22 +84,10 @@ program main
     ! pSelf = density * 10. / LOSCHMIDT * temperature/stTemperature
     
     pForeign = pressure - pSelf
-
-    ! Construction of the extenstion for the PT-table output file, reflecting an atmospheric level
-    levelLabel = '___'
-    if ( levelsIdx < 10 ) then
-        write(levelLabel(1:1), '(I1)') levelsIdx
-    else
-        if ( levelsIdx < 100 ) then
-            write(levelLabel(1:2), '(I2)') levelsIdx
-        else
-            write(levelLabel(1:3), '(I3)') levelsIdx
-        end if
-    end if
     
     ! Direct access files section: be aware about the OS compatability
     open(outputUnit, access='DIRECT', form='UNFORMATTED', recl=NT*4, &
-        file=trim(fullSubDirPath)//'/'//levelLabel//'.ptbin')
+        file=trim(fullSubDirPath)//'/'//'pt-table'//'.ptbin')
     ! RECL = NT for old Windows Fortrans !
     
     ! the whole interval [startWV, endWV] is separated into subintervals of the same length of deltaWV
@@ -170,9 +152,6 @@ program main
     end do SUBINTERVALS_LOOP
         
     close(outputUnit)
-    
-    call cpu_time(endTime)
-    print *, "Took: ", endTime - startTime, " seconds"
 
 
 contains
