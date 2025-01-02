@@ -1,64 +1,80 @@
+"""
+    Methods for interacting with PT-table:
+        - conversion to human-readable format
+        - data parsing
+"""
 import sys
 import shutil
 import os
 import numpy as np
 
-def convert_pttable(dir, V1, V2):
-    NT = 20481
-    deltaWV = 10
-    pttable_basename = 'pt-table.ptbin'
 
-    if not os.path.isdir(dir):
-        print(f"Error: Directory {dir} does not exist.")
+def convert_pttable(request_id: int) -> None:
+    """
+        Converts PT-table binary file into human-readable format.
+    """
+    points_per_record = 20481
+    record_wv_span = 10  # one record spans 10 cm-1 of absorption data
+    pttable_basename = 'pt-table.ptbin'
+    directory = f"media/users/{request_id}"
+
+    if not os.path.isdir(directory):
+        print(f"Error: Directory {directory} does not exist.")
         sys.exit(1)
 
-    pttable_file = os.path.join(dir, pttable_basename)
+    pttable_file = os.path.join(directory, pttable_basename)
     if not os.path.exists(pttable_file):
         print(f"File {pttable_file} does not exist.")
         sys.exit(2)
 
-    info_filename = os.path.join(dir, 'info.txt')
+    info_filename = os.path.join(directory, 'info.txt')
     if not os.path.isfile(info_filename):
-        print(f"Error: info.txt file not found in {dir}")
+        print(f"Error: info.txt file not found in {directory}")
         sys.exit(3)
 
-    shutil.copyfile(info_filename, os.path.join(dir, 'output.txt'))
-    output_filename = os.path.join(dir, 'output.txt')
+    v1, v2 = None, None
 
-    step = deltaWV / (NT-1)
+    with open(info_filename) as info_file:
+        for line in info_file.readlines():
+            if line.startswith("Start Wavenumber"):
+                v1 = float(line.split(':')[1])
+            if line.startswith("End Wavenumber"):
+                v2 = float(line.split(':')[1])
 
-    NZ1 = int(V1 / 10.0)
-    NZ2 = int((V2 - 1) / 10.0)
-    count = NZ2 - NZ1 + 1
+    if v1 is None or v2 is None:
+        print(f"Error: Start or End wavenumbers are not defined in the info.txt file")
+        sys.exit(5)
 
-    record_length = NT * 4
+    shutil.copyfile(info_filename, os.path.join(directory, 'output.txt'))
+    output_filename = os.path.join(directory, 'output.txt')
+
+    start_record_number = int(v1 / 10.0)
+    end_record_number = int((v2 - 1) / 10.0)
+    num_records = end_record_number - start_record_number + 1
+    step = record_wv_span / (points_per_record - 1)
+
+    record_size = points_per_record * 4  # bytes
     data = []
-    record_number = NZ1
+    record_number = start_record_number
     with open(pttable_file, 'rb') as f:
-        for II in range(1, count + 1):
-
-            seek_position = (record_number - 1) * record_length
+        for j in range(1, num_records + 1):
+            seek_position = (record_number - 1) * record_size
             if seek_position >= os.path.getsize(pttable_file):
-                sys.exit(f"ERROR: Record number {record_number} exceeds file size.")
+                print(f"ERROR: Record number {record_number} exceeds a file size.")
+                sys.exit(4)
             f.seek(seek_position)
-            record_bytes = f.read(record_length)
+            binary_abs_data = f.read(record_size)  # reads absorption data from one record
 
-            RK = np.frombuffer(record_bytes, dtype='<f4')
-            RK = RK.astype(np.float32)
+            abs_data = np.frombuffer(binary_abs_data, dtype=np.float32)
 
-            V11 = V1 + deltaWV * (II - 1)
+            in_record_start_wv = record_wv_span * record_number
+            for i in range(points_per_record):
+                vw = in_record_start_wv + i * step
+                data.append((vw, abs_data[i]))
 
-            for I in range(1, int((NT + 1))):
-                VV = V11 + (I - 1) * step
-                RK_index = (I - 1)
-                if RK_index >= NT:
-                    break
-                RK_value = RK[RK_index]
-                data.append((VV, RK_value))
-
-            record_number = NZ1 + II
+            record_number = start_record_number + j
 
     with open(output_filename, 'a') as output:
-        for VV, RK in data:
-            output.write(f"{VV:15.5f} {RK:17.7f}\n")
+        for vw, abs_data in data:
+            output.write(f"{vw:15.5f} {abs_data:17.7e}\n")
     return
