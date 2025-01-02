@@ -13,10 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Fortran script path
-FORTRAN_SCRIPT_PATH = ""
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -36,8 +33,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '../media/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+SPECTRES_ROOT = os.path.join(MEDIA_ROOT, 'users')
 
 # Application definition
 
@@ -137,5 +135,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 CORS_ALLOWED_CREDENTIALS = True
 USE_X_FORWARDED_HOST = True
-
-calculating_static = "../users"
