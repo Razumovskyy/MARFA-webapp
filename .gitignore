@@ -43,3 +43,7 @@ venv/
 
 *.DS_Store
 /.idea
+
+# local databases
+db.sqlite3
+db.sqlite3-journal
