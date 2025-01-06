@@ -47,3 +47,4 @@ venv/
 # local databases
 db.sqlite3
 db.sqlite3-journal
+*.log
