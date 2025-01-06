@@ -1,42 +1,57 @@
-from spectres.models import Spectre
+"""
+Authors:
+    Mikhail Razumovskii and Denis Astanin, 2025
+
+Description:
+    This module is a part of the MARFA-webapp project.
+"""
+from typing import Dict, Any
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
+from spectres.models import Spectre
 
 
 class SpectreSerializer(serializers.ModelSerializer):
+    """
+    Serializer for user request for calculation of absorption spectra
+    see the post method of .views/SpectreView class
+    """
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
+    species = serializers.CharField(write_only=True, required=True)
+    v_start = serializers.FloatField(write_only=True, required=True)
+    v_end = serializers.FloatField(write_only=True, required=True)
+    database_slug = serializers.CharField(write_only=True, required=True)
+    line_cut_off = serializers.IntegerField(write_only=True, required=True)
+    pressure = serializers.FloatField(write_only=True, required=True)
+    density = serializers.FloatField(write_only=True, required=True)
+    temperature = serializers.FloatField(write_only=True, required=True)
+    target_value = serializers.CharField(write_only=True, required=True)
+    zip_url = serializers.URLField(read_only=True)
+
+    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validates that `v_start` is less than or equal to `v_end` in the given attributes.
+        """
+        if not attrs['v_start'] <= attrs['v_end']:
+            raise ValidationError({
+                'detail': 'v_start must be less than or equal to v_end for spectral interval'
+            })
+        return attrs
+
     class Meta:
         model = Spectre
-        fields = "__all__"
-
-
-class ProcessDataSerializer(serializers.Serializer):
-    v1 = serializers.IntegerField()
-    v2 = serializers.IntegerField()
-    resolution = serializers.CharField(max_length=64)
-    level = serializers.IntegerField()
-    id = serializers.IntegerField()
-
-    def validate(self, data):
-        try:
-            spectre = Spectre.objects.get(pk=data['id'])
-        except Spectre.DoesNotExist:
-            raise serializers.ValidationError({"id": "Spectre with this ID does not exist."})
-
-        if not (spectre.v_start <= data['v1'] <= spectre.v_end):
-            raise serializers.ValidationError(
-                {"v1": f"v1 ({data['v1']}) must be between {spectre.v_start} and {spectre.v_end}."})
-
-        if not (spectre.v_start <= data['v2'] <= spectre.v_end):
-            raise serializers.ValidationError(
-                {"v2": f"v2 ({data['v2']}) must be between {spectre.v_start} and {spectre.v_end}."})
-
-        if data['v1'] > data['v2']:
-            raise serializers.ValidationError({"v1": "v1 must be less than or equal to v2."})
-
-        return data
-
-    def create(self, validated_data):
-        pass
-
-    def update(self, instance, validated_data):
-        pass
+        fields = [
+            "id",
+            "species",
+            "v_start",
+            "v_end",
+            "database_slug",
+            "line_cut_off",
+            "pressure",
+            "density",
+            "temperature",
+            "target_value",
+            "zip_url",
+        ]
