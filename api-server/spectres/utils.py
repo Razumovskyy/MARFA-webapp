@@ -8,6 +8,7 @@ Description:
 import shutil
 import subprocess
 from pathlib import Path
+from typing import Tuple
 
 from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, CURRENT_HOST, MEDIA_URL
 from spectres.models import Spectre
@@ -28,16 +29,19 @@ def create_spectre_directory(identifier: int) -> Path:
     return directory
 
 
-def calculate_absorption_spectre(spectre: Spectre) -> None:
+def calculate_absorption_spectre(spectre: Spectre) -> Tuple[str, str]:
     """
-    Calls fortran executable to generate PT-table for calculation request.
-    Checks that the PT-table exists and is located in the correct place.
+    Executes the Fortran executable to perform absorption calculations and
+    generate a PT-table with results based on the given spectral parameters.
 
     Args:
-        spectre (Spectre): The spectre instance.
+        spectre (Spectre): An instance of the `Spectre` class containing
+            the necessary parameters for the absorption calculation
 
     Returns:
-        Path: The path to the generated PT-table.
+        Tuple[str, str]: A tuple containing:
+            - stdout (str): The standard output from the Fortran executable.
+            - stderr (str): The standard error from the Fortran executable.
     """
     arguments = [
         'fpm', 'run', 'marfa', '--',
@@ -53,21 +57,58 @@ def calculate_absorption_spectre(spectre: Spectre) -> None:
         f'{spectre.pk}',
     ]
     directory = Path(BASE_DIR) / 'core'
-    subprocess.run(
+
+    result = subprocess.run(
         args=arguments,
         cwd=directory,
         capture_output=True,
         text=True,
         check=True,
     )
+    return result.stdout, result.stderr
+
+
+def generate_log_files(directory: Path, stdout_content: str, stderr_content: str) -> None:
+    """
+    Creates log files (`stdout.log` and `stderr.log`) in the specified directory
+    based on the results of the absorption calculation.
+
+    Args:
+        directory (Path): The directory where the log files will be generated.
+        stdout_content (str): The content to be written to `stdout.log`.
+        stderr_content (str): The content to be written to `stderr.log`.
+
+    Returns:
+        None: This function does not return anything.
+    """
+
+    log_files = {
+        'stdout.log': stdout_content,
+        'stderr.log': stderr_content,
+    }
+
+    for basename, content in log_files.items():
+        logfile = directory / basename
+        logfile.write_text(content or "")
 
 
 def check_output_files(directory: Path) -> bool:
     """
-    Helper function for checking if the generated PT-table exists along with info.txt file with metadata.
+    Checks for the existence of required output files in the specified directory.
+
+    This function verifies if the generated PT-table file (`pt-table.ptbin`)
+    and the metadata file (`info.txt`) exist in the given directory. If either
+    of the files is missing, it raises a `FileNotFoundError`.
+
+    Args:
+        directory (Path): The directory path where the output files are expected
+            to be located.
+
+    Returns:
+        bool: Returns `True` if both files exist.
     """
     if not (Path(directory / 'pt-table.ptbin').is_file() and Path(directory / 'info.txt').is_file()):
-        raise RuntimeError('Either PT-table file or info file does not exist.')
+        raise FileNotFoundError('Either PT-table file or info file does not exist.')
     return True
 
 
