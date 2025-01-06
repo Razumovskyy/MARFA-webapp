@@ -3,11 +3,10 @@ Authors:
     Mikhail Razumovskii and Denis Astanin, 2025
 
 Description:
-    This module is part of the MARFA-webapp project.
+    This module is a part of the MARFA-webapp project.
 """
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-
 
 VW_VALIDATORS = [MinValueValidator(10), MaxValueValidator(14000)]
 LINE_CUT_OFF_VALIDATORS = [MaxValueValidator(500)]
