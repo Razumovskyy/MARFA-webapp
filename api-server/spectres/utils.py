@@ -1,80 +1,91 @@
 """
-    Methods for interacting with PT-table:
-        - conversion to human-readable format
-        - data parsing
+Authors:
+    Mikhail Razumovskii and Denis Astanin, 2025
+
+Description:
+    This module is a part of the MARFA-webapp project.
 """
-import sys
 import shutil
-import os
-import numpy as np
+import subprocess
+from pathlib import Path
+
+from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, CURRENT_HOST, MEDIA_URL
+from spectres.models import Spectre
 
 
-def convert_pttable(request_id: int) -> None:
+def create_spectre_directory(identifier: int) -> Path:
     """
-        Converts PT-table binary file into human-readable format.
+    Creates a directory for the spectre calculation based on its identifier.
+
+    Args:
+        identifier (int): The unique identifier for the spectre.
+
+    Returns:
+        Path: The path to the created spectre directory.
     """
-    points_per_record = 20481
-    record_wv_span = 10  # one record spans 10 cm-1 of absorption data
-    pttable_basename = 'pt-table.ptbin'
-    directory = f"media/users/{request_id}"
+    directory = Path(SPECTRES_ROOT) / str(identifier)
+    directory.mkdir(parents=True)
+    return directory
 
-    if not os.path.isdir(directory):
-        print(f"Error: Directory {directory} does not exist.")
-        sys.exit(1)
 
-    pttable_file = os.path.join(directory, pttable_basename)
-    if not os.path.exists(pttable_file):
-        print(f"File {pttable_file} does not exist.")
-        sys.exit(2)
+def calculate_absorption_spectre(spectre: Spectre) -> None:
+    """
+    Calls fortran executable to generate PT-table for calculation request.
+    Checks that the PT-table exists and is located in the correct place.
 
-    info_filename = os.path.join(directory, 'info.txt')
-    if not os.path.isfile(info_filename):
-        print(f"Error: info.txt file not found in {directory}")
-        sys.exit(3)
+    Args:
+        spectre (Spectre): The spectre instance.
 
-    v1, v2 = None, None
+    Returns:
+        Path: The path to the generated PT-table.
+    """
+    arguments = [
+        'fpm', 'run', 'marfa', '--',
+        f'{spectre.species}',
+        f'{spectre.v_start}',
+        f'{spectre.v_end}',
+        f'{spectre.database_slug}',
+        f'{spectre.line_cut_off}',
+        f'{spectre.pressure}',
+        f'{spectre.temperature}',
+        f'{spectre.density}',
+        f'{spectre.target_value}',
+        f'{spectre.pk}',
+    ]
+    directory = Path(BASE_DIR) / 'core'
+    subprocess.run(
+        args=arguments,
+        cwd=directory,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
 
-    with open(info_filename) as info_file:
-        for line in info_file.readlines():
-            if line.startswith("Start Wavenumber"):
-                v1 = float(line.split(':')[1])
-            if line.startswith("End Wavenumber"):
-                v2 = float(line.split(':')[1])
 
-    if v1 is None or v2 is None:
-        print(f"Error: Start or End wavenumbers are not defined in the info.txt file")
-        sys.exit(5)
+def check_output_files(directory: Path) -> bool:
+    """
+    Helper function for checking if the generated PT-table exists along with info.txt file with metadata.
+    """
+    if not (Path(directory / 'pt-table.ptbin').is_file() and Path(directory / 'info.txt').is_file()):
+        raise RuntimeError('Either PT-table file or info file does not exist.')
+    return True
 
-    shutil.copyfile(info_filename, os.path.join(directory, 'output.txt'))
-    output_filename = os.path.join(directory, 'output.txt')
 
-    start_record_number = int(v1 / 10.0)
-    end_record_number = int((v2 - 1) / 10.0)
-    num_records = end_record_number - start_record_number + 1
-    step = record_wv_span / (points_per_record - 1)
+def generate_zip_archive(directory: Path) -> Path:
+    """
+    Generates archive of the spectre directory inside the MEDIA_ROOT directory.
+    The archive is named like <id>.zip, where <id> is the unique identifier for the spectre.
 
-    record_size = points_per_record * 4  # bytes
-    data = []
-    record_number = start_record_number
-    with open(pttable_file, 'rb') as f:
-        for j in range(1, num_records + 1):
-            seek_position = (record_number - 1) * record_size
-            if seek_position >= os.path.getsize(pttable_file):
-                print(f"ERROR: Record number {record_number} exceeds a file size.")
-                sys.exit(4)
-            f.seek(seek_position)
-            binary_abs_data = f.read(record_size)  # reads absorption data from one record
+    Args:
+        directory(Path): The spectre directory.
 
-            abs_data = np.frombuffer(binary_abs_data, dtype=np.float32)
-
-            in_record_start_wv = record_wv_span * record_number
-            for i in range(points_per_record):
-                vw = in_record_start_wv + i * step
-                data.append((vw, abs_data[i]))
-
-            record_number = start_record_number + j
-
-    with open(output_filename, 'a') as output:
-        for vw, abs_data in data:
-            output.write(f"{vw:15.5f} {abs_data:17.7e}\n")
-    return
+    Returns:
+        Path: The path to the generated zip archive.
+    """
+    archive_name = shutil.make_archive(
+        base_name=str(Path(MEDIA_ROOT) / directory.name),
+        format='zip',
+        root_dir=SPECTRES_ROOT,
+        base_dir=str(directory.name),
+    )
+    return Path(CURRENT_HOST) / Path(MEDIA_URL) / archive_name

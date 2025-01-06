@@ -1,69 +1,75 @@
-import shutil
+"""
+Authors:
+    Mikhail Razumovskii and Denis Astanin, 2025
 
-from django.core.files.storage import FileSystemStorage
+Description:
+    This module is a part of the MARFA-webapp project.
+"""
+from subprocess import SubprocessError, CalledProcessError
+
+from django.db import transaction
 from rest_framework import status
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from spectres.models import Spectre
-from spectres.serializers import SpectreSerializer, ProcessDataSerializer
-import subprocess
-import os
-
-from marfa_app.settings import calculating_static, atmospheres_static, CURRENT_HOST, MEDIA_ROOT
+from spectres.parsers import convert_pttable
+from spectres.serializers import SpectreSerializer
+from spectres.utils import create_spectre_directory, calculate_absorption_spectre, generate_zip_archive, \
+    check_output_files
 
 
 class SpectreView(APIView):
+    """
+        Views for interaction with spectre model
+    """
     serializer_class = SpectreSerializer
 
-    def post(self, request):
-        ser = SpectreSerializer(data=request.data)
-        if ser.is_valid():
-            data = ser.validated_data
-            spectre = ser.save()
-            complete_dir = os.path.join(calculating_static, str(spectre.pk))
-            os.makedirs(complete_dir, exist_ok=True)
-            os.makedirs(f'../MARFA/users/{spectre.pk}/ptTables')
-            os.makedirs(f'../MARFA/users/{spectre.pk}/plots')
-            os.makedirs(f'../MARFA/users/{spectre.pk}/processedData')
-            if spectre.spectre_type == 'default':
-                shutil.copy(atmospheres_static + spectre.file_name, os.path.join(complete_dir, spectre.file_name))
-            else:
-                fs = FileSystemStorage(location=complete_dir)
-                fs.save(spectre.file_name, data['file'])
-            command = (f'cd ../MARFA && fpm run marfa -- '
-                       f'{spectre.species} {spectre.v_start} {spectre.v_end} '
-                       f'{spectre.database_slug} {spectre.line_cut_off} {spectre.chi_factor} '
-                       f'{spectre.target_value} {spectre.file_name} {spectre.pk}')
-            process = subprocess.run(command, shell=True, capture_output=True, text=True)
-            print(command)
-            '''if process.returncode != 0:
-                return Response(
-                    status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-                    data={"detail": f"Subprocess execution failed"}
-                )'''
-            pt_tables_dir = f'{MEDIA_ROOT}/{spectre.pk}/ptTables'
-            zip_filename = f'ptTables.zip'
-            zip_path = f'{MEDIA_ROOT}/{spectre.pk}/{zip_filename}'
-            shutil.make_archive(zip_path.replace('.zip', ''), 'zip', pt_tables_dir)
-            spectre.zip_url = f'{CURRENT_HOST}/media/{spectre.pk}/{zip_filename}'
-            spectre.save()
-            return Response(status=status.HTTP_201_CREATED, data=SpectreSerializer(spectre).data)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=ser.errors)
+    @transaction.atomic
+    def post(self, request: Request) -> Response:
+        """
+        Handles a user's request to calculate the absorption spectrum in PT-table format.
 
-    def put(self, request):
-        ser = ProcessDataSerializer(data=request.data)
-        if ser.is_valid():
-            data = ser.validated_data
-            command = (f'cd ../MARFA && python scripts/postprocess.py '
-                       f'--uuid {data["id"]} --v1 {data["v1"]} --v2 {data["v2"]} --level {data["level"]}'
-                       f' --resolution {data["resolution"]} --plot')
-            print(command)
-            process = subprocess.run(command, shell=True, capture_output=True, text=True)
-            spectre = Spectre.objects.get(pk=data["id"])
-            file_name = f'{spectre.species}_{data["level"]}_{spectre.target_value}_{data["v1"]}-{data["v2"]}'
-            plot_path = f'{CURRENT_HOST}/media/{spectre.pk}/plots/{file_name}.png'
-            data_path = f'{CURRENT_HOST}/media/{data["id"]}/processedData/{file_name}.dat'
-            return Response(status=status.HTTP_200_OK,
-                            data={"plot_url": plot_path, "data_url": data_path})
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=ser.errors)
+        Validates the input data, performs the spectrum calculation, generates
+        a zipped archive of the results, and updates the database. If an error
+        occurs during the calculation or subprocess execution, an appropriate
+        error response is returned.
+
+        Args:
+            request (Request): The HTTP request object containing the parameters for
+                               the absorption spectrum calculation.
+
+        Returns:
+            Response: A response object with a 201 status code and serialized
+                      data of the successfully created spectrum, or a 500 status
+                      code with error details in case of a failure.
+        """
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            spectre = serializer.save()
+            spectre_dir = create_spectre_directory(spectre.pk)
+            calculate_absorption_spectre(spectre)
+            check_output_files(spectre_dir)
+            convert_pttable(spectre_dir)
+            spectre.zip_url = generate_zip_archive(spectre_dir)
+            spectre.save()
+            serializer = self.serializer_class(spectre)
+            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+        except (CalledProcessError, SubprocessError) as e:
+            return Response(
+                data={
+                    'detail': f'Error occurred while running Fortran executable',
+                    'exception': str(repr(e))
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        except Exception as e:
+            return Response(data={'exception': f'{type(e).__name__}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request: Request) -> Response:
+        """
+        Handles dynamic data parsing for plots
+        """
+        pass
