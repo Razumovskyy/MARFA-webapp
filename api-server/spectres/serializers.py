@@ -10,7 +10,7 @@ from typing import Dict, Any
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from spectres.models import Spectre
+from spectres.models import Spectre, SpeciesChoice
 
 
 class SpectreSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class SpectreSerializer(serializers.ModelSerializer):
     see the post method of .views/SpectreView class
     """
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-    species = serializers.CharField(write_only=True, required=True)
+    species = serializers.ChoiceField(choices=SpeciesChoice.choices, write_only=True, required=True)
     v_start = serializers.FloatField(write_only=True, required=True)
     v_end = serializers.FloatField(write_only=True, required=True)
     database_slug = serializers.CharField(write_only=True, required=True)
