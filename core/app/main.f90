@@ -40,6 +40,7 @@ program main
 
     integer :: linesNumber
 
+    call cpu_time(startTime)
 
     call readCommandLineArguments()
     ! call readAtmosphericParameters()
@@ -54,18 +55,18 @@ program main
     call initialiseLogFiles()
     
     ! DEBUG SECTION !
-    ! print *, inputMolecule
-    ! print *, startWV
-    ! print *, endWV
-    ! print *, cutOff
-    ! print *, chiFactorFuncName
-    ! print *, targetValue
-    ! print *, atmProfileFile
+    ! write (*,*) inputMolecule
+    ! write (*,*) startWV
+    ! write (*,*) endWV
+    ! write (*,*) cutOff
+    ! write (*,*) chiFactorFuncName
+    ! write (*,*) targetValue
+    ! write (*,*) atmProfileFile
 
     call getSpeciesCode(inputMolecule, moleculeIntCode, DBfileExtension)
     if (moleculeIntCode == 0) then
-        print *, 'ERROR: unsupported molecule: ', trim(adjustl(inputMolecule))
-        stop 8
+        write (0, *) 'ValueError: unsupported molecule: ', trim(adjustl(inputMolecule))
+        stop 81
     end if
 
     call determineStartingSpectralLine(databaseSlug, startingLineIdx, startingLineWV)
@@ -73,7 +74,7 @@ program main
     ! Uncomment this section, to determine number of lines (may slightly downgrade performance)
     ! extEndWV = endWV + cutOff
     ! call determineNumberOfLines(startingLineIdx, linesNumber)
-    ! print *, 'Number of spectral lines to be considered: ', linesNumber
+    ! write (*,*) 'Number of spectral lines to be considered: ', linesNumber
     
     ! Initializing the pressure (total), temperature and density (of the species) at current atm level
 
@@ -96,7 +97,7 @@ program main
     endDeltaWV = startDeltaWV + deltaWV ! right boundary of the first subinterval
 
     isFirstSubinterval = .true.
-
+    
     SUBINTERVALS_LOOP: do while (startDeltaWV < endWV)
 
         ! Relation between record number and left boundary of a subinterval
@@ -126,14 +127,14 @@ program main
         call resetAbsorptionGridValues()
 
         ! DEBUG SECTION !
-        ! print *, lineIdx
-        ! print *, capWV
+        ! write (*,*) lineIdx
+        ! write (*,*) capWV
         
         ! Proceed to this subroutine for reading spectral features line-by-line inside a subinterval
         call lblScheme(lineIdx, capWV)
         
         ! DEBUG SECTION !
-        ! print *, 'lineIdx after LBL: ', lineIdx
+        ! write (*,*) 'lineIdx after LBL: ', lineIdx
 
         call cascadeInterpolation()
 
@@ -152,7 +153,9 @@ program main
     end do SUBINTERVALS_LOOP
         
     close(outputUnit)
-
+    call cpu_time(endTime)
+    write(*,'(A,F7.3,A)') 'Took: ', endTime - startTime, ' seconds'
+    write(*,*) 'Successful exit'
 
 contains
 
@@ -205,9 +208,9 @@ contains
 
         ! simple check for consistency of the database file
         if ((abs(startWV - cutOff - lineWVBeg) > 25.) .and. (startWV > cutOff)) then
-            print *, "ATTENTION: database file might be insufficient for input spectral interval:"
-            print *, "Your input left boundary - cutOff condition: ", startWV - cutOff, " cm-1"
-            print *, "Line-by-line scheme starts from: ", lineWVBeg, " cm-1"
+            write (*,*) "ATTENTION: database file might be insufficient for input spectral interval:"
+            write (*,*) "Your input left boundary - cutOff condition: ", startWV - cutOff, " cm-1"
+            write (*,*) "Line-by-line scheme starts from: ", lineWVBeg, " cm-1"
         end if
     end subroutine determineStartingSpectralLine
 

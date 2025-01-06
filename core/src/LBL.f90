@@ -44,12 +44,12 @@ contains
                                                     foreignTempCoeff, jointMolIso, deltaForeign
      
             ! DEBUG SECTION !
-            ! print *, 'lineWV: ', lineWV
-            ! print *, 'refLineIntensity: ', refLineIntensity
+            ! write (*,*) 'lineWV: ', lineWV
+            ! write (*,*) 'refLineIntensity: ', refLineIntensity
             
             if (ios2 > 0) then
-                print *, 'ERROR: when reading file with spectral data.'
-                stop 9
+                write (0, *) 'FileReadingError: when reading file with spectral data.'
+                stop 93
             end if
 
             ! exit the loop when extended subinterval (endDeltaWV + cutOff) ends
@@ -73,9 +73,9 @@ contains
             lineIntensity = intensityOfT(temperature)
 
             ! DEBUG SECTION !
-            ! print *, 'dopHWHM: ', dopHWHM
-            ! print *, 'lorHWHM: ', lorHWHM
-            ! print *, 'VY: ', lorHWHM * sqln2 /dopHWHM
+            ! write (*,*) 'dopHWHM: ', dopHWHM
+            ! write (*,*) 'lorHWHM: ', lorHWHM
+            ! write (*,*) 'VY: ', lorHWHM * sqln2 /dopHWHM
             ! pause
             
             if (shiftedLineWV < startDeltaWV) then

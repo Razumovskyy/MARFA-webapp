@@ -47,10 +47,21 @@ contains
                 call get_command_argument(l, startWVcla)
                 startWVclaTrimmed = trim(startWVcla)
                 read(startWVclaTrimmed, *) startWV
+                if (startWV < 10. .or. startWV > 14000.) then
+                    write(0, *) 'ValueError: StartWV must be greater than 10 and less than 14000'
+                    stop 22
+                end if
             case (3)
                 call get_command_argument(l, endWVcla)
                 endWVclaTrimmed = trim(endWVcla)
                 read(endWVclaTrimmed, *) endWV
+                if (endWV < 10. .or. endWV > 14000.) then
+                    write(0, *) 'ValueError: EndWV must be greater than 10 and less than 14000'
+                    stop 28
+                end if
+                if (endWV < startWV) then
+                    write(0, *) 'ValueError: right boundary of the spectral interval must be greater than left one'
+                end if
             case (4)
                 call get_command_argument(l, databaseSlug)
             case (5)
@@ -65,6 +76,10 @@ contains
                 call get_command_argument(l, inputTemperaturecla)
                 inputTemperatureClaTrimmed = trim(inputTemperaturecla)
                 read(inputTemperatureClaTrimmed, *) temperature
+                if (temperature < 20. .or. temperature > 1000.) then
+                    write(0, *) 'ValueError: Temperature must be greater than 20 and less than 1000 K'
+                    stop 32
+                end if
             case(8)
                 call get_command_argument(l, inputNumberDensityCla)
                 inputNumberDensityClaTrimmed = trim(inputNumberDensityCla)
@@ -77,10 +92,10 @@ contains
                 case ('ACS', 'VAC')
                     ! Valid targetValue; proceed as normal
                 case default
-                    print *, 'Error: Invalid targetValue "', targetValue, '". & 
+                    write (0, *) 'ValueError: Invalid targetValue "', trim(targetValue), '". & 
                                 Must be either "ACS" (Absorption cross-section) or &
                                 "VAC" (Volume absorption coefficient).'
-                    stop 2
+                    stop 24
                 end select
             case (10)
                 call get_command_argument(l, uuid)
@@ -106,8 +121,8 @@ contains
         open(infoUnit, file=infoFilePath, status='replace', action='write', iostat=status)
 
         if (status /= 0) then
-            print *, "Error: Unable to create info file at ", trim(infoFilePath)
-            stop 4
+            write (0, *) "Error: Unable to create info file at ", trim(infoFilePath)
+            stop 42
         end if
 
         ! Write command-line arguments to the info file
