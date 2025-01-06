@@ -17,6 +17,8 @@ class SpectreSerializer(serializers.ModelSerializer):
     """
     Serializer for user request for calculation of absorption spectra
     see the post method of .views/SpectreView class
+
+    read_only fields: id, zip_url (link to the generated archive with results)
     """
     id = serializers.PrimaryKeyRelatedField(read_only=True)
     species = serializers.ChoiceField(choices=SpeciesChoice.choices, write_only=True, required=True)
