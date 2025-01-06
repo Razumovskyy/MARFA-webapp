@@ -144,52 +144,6 @@ contains
         intensityOfT = refLineIntensity * TIPSFactor * boltzmannFactor * emissionFactor
     end function intensityOfT
 
-
-    ! real function parameterizedLorentzHWHM(pressureParameter, includeGammaSelf, partialPressureParameter, & 
-    !                             includeTemperature, temperatureParameter)
-    !     ! use this function for calculation Lorentz half-width if temperature is not known (reference temperature
-    !     ! will be set) or self-broadening is not known (partial pressure will be set to zero)
-        
-    !     implicit none
-        
-    !     real, intent(in) :: pressureParameter
-    !     logical, optional, intent(in) :: includeGammaSelf, includeTemperature
-    !     real, optional, intent(in) :: partialPressureParameter
-    !     real, optional, intent(in) :: temperatureParameter
-        
-    !     logical :: isIncludeGammaSelf, isIncludeTemperature
-        
-    !     ! defaults:
-    !     isIncludeGammaSelf = .false.   ! do not count p_self, and gamma_self
-    !     isIncludeTemperature = .false. ! no temperature dependency: temperature is set to 296 K
-        
-    !     if (present(includeTemperature)) isincludeTemperature = includeTemperature
-    !     if (present(includeGammaSelf)) isIncludeGammaSelf = includeGammaSelf
-
-    !     if (.not. isIncludeGammaSelf .and. .not. isIncludeTemperature) then
-    !         ! temperature is set to 296 K and partial pressure is not counted
-    !         parameterizedLorentzHWHM = gammaForeign * pressureParameter
-    !     end if
-        
-    !     if (isIncludeGammaSelf .and. .not. isIncludeTemperature) then
-    !         ! temperature is set to 296 K and partial pressure included
-    !         parameterizedLorentzHWHM = gammaForeign * (pressureParameter - partialPressureParameter) + &
-    !                         gammaSelf * partialPressureParameter
-    !     end if
-
-    !     if (.not. isIncludeGammaSelf .and. isIncludeTemperature) then
-    !         ! temperature dependence is present, but partial pressure not included
-    !         parameterizedLorentzHWHM = ((refTemperature / temperatureParameter)**foreignTempCoeff) * (gammaForeign * pressureParameter)
-    !     end if
-
-    !     if (isIncludeGammaSelf .and. isIncludeTemperature) then
-    !         ! full formula (6) from HITRAN docs 
-    !         parameterizedLorentzHWHM = ((refTemperature / temperatureParameter)**foreignTempCoeff) * &
-    !                         (gammaForeign * (pressureParameter - partialPressureParameter) + &
-    !                         gammaSelf * partialPressureParameter)
-    !     end if
-    ! end function parameterizedLorentzHWHM
-
     
     pure function lorentz(X, lorHWHMParameter) result(lorentzShape)
         implicit none
