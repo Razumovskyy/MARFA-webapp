@@ -82,3 +82,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 USE_X_FORWARDED_HOST = True
+
+# Calculation-related filenames in spectre dir
+PT_FILENAME = 'pt-table.ptbin'
+INFO_FILENAME = 'info.txt'
+OUTPUT_FILENAME = 'output.dat'

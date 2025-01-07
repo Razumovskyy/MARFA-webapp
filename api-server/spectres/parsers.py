@@ -11,6 +11,8 @@ from pathlib import Path
 
 import numpy as np
 
+from marfa_app.settings import PT_FILENAME, INFO_FILENAME, OUTPUT_FILENAME
+
 POINTS_PER_RECORD = 20481
 RECORD_WV_SPAN = 10  # one record spans 10 cm-1 of absorption data
 RECORD_SIZE = POINTS_PER_RECORD * 4  # 4 bytes per each value
@@ -25,13 +27,13 @@ def convert_pttable(directory: Path) -> None:
 
     Parameters:
         directory (Path): The directory containing the PT-table binary file 
-                                  (`pt-table.ptbin`) and the associated `info.txt` file.
+                                and the associated file.
 
     Raises:
         ValueError: If the `info.txt` file is corrupted or does not contain valid start and end 
                     wavenumber information.
         IndexError: If the record number, record size and file size are inconsistent.
-        FileNotFoundError: If `pt-table.ptbin` or `info.txt` is missing in the spectre directory.
+        FileNotFoundError: If `PT_FILENAME` or `info.txt` is missing in the spectre directory.
 
     Output:
         - Copies the contents of `info.txt` file to the beginning of the `output.dat` file.
@@ -41,8 +43,8 @@ def convert_pttable(directory: Path) -> None:
               - Absorption coefficient (float): The corresponding absorption value in scientific notation.
     """
 
-    pttable_file = directory / 'pt-table.ptbin'
-    info_file = directory / 'info.txt'
+    pttable_file = directory / PT_FILENAME
+    info_file = directory / INFO_FILENAME
 
     v1, v2 = None, None
 
@@ -56,7 +58,7 @@ def convert_pttable(directory: Path) -> None:
     if v1 is None or v2 is None:
         raise ValueError(f"Corrupted info file: start or end wavenumbers are not defined")
 
-    output_file = shutil.copyfile(info_file, directory / 'output.dat')
+    output_file = shutil.copyfile(info_file, directory / OUTPUT_FILENAME)
 
     start_record_number = int(v1 / 10.0)
     end_record_number = int((v2 - 1) / 10.0)

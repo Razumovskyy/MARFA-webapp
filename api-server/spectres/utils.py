@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import Tuple
 
-from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, CURRENT_HOST, MEDIA_URL
+from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, CURRENT_HOST, MEDIA_URL, INFO_FILENAME, PT_FILENAME
 from spectres.models import Spectre
 
 
@@ -96,7 +96,7 @@ def check_output_files(directory: Path) -> bool:
     """
     Checks for the existence of required output files in the specified directory.
 
-    This function verifies if the generated PT-table file (`pt-table.ptbin`)
+    This function verifies if the generated PT-table file (`PT_FILENAME`)
     and the metadata file (`info.txt`) exist in the given directory. If either
     of the files is missing, it raises a `FileNotFoundError`.
 
@@ -107,7 +107,7 @@ def check_output_files(directory: Path) -> bool:
     Returns:
         bool: Returns `True` if both files exist.
     """
-    if not (Path(directory / 'pt-table.ptbin').is_file() and Path(directory / 'info.txt').is_file()):
+    if not (Path(directory / PT_FILENAME).is_file() and Path(directory / INFO_FILENAME).is_file()):
         raise FileNotFoundError('Either PT-table file or info file does not exist.')
     return True
 
