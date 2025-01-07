@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import Tuple
 
-from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, CURRENT_HOST, MEDIA_URL, INFO_FILENAME, PT_FILENAME
+from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, INFO_FILENAME, PT_FILENAME
 from spectres.models import Spectre
 
 
@@ -25,7 +25,7 @@ def create_spectre_directory(identifier: int) -> Path:
         Path: The path to the created spectre directory.
     """
     directory = Path(SPECTRES_ROOT) / str(identifier)
-    directory.mkdir(parents=True)
+    directory.mkdir(parents=True, exist_ok=True)
     return directory
 
 
@@ -116,6 +116,8 @@ def generate_zip_archive(directory: Path) -> Path:
     """
     Generates archive of the spectre directory inside the MEDIA_ROOT directory.
     The archive is named like <id>.zip, where <id> is the unique identifier for the spectre.
+    Zip archive populates the FileField of the Spectre model, so it must be saved inside the
+    MEDIA_ROOT directory.
 
     Args:
         directory(Path): The spectre directory.
@@ -129,4 +131,4 @@ def generate_zip_archive(directory: Path) -> Path:
         root_dir=SPECTRES_ROOT,
         base_dir=str(directory.name),
     )
-    return Path(CURRENT_HOST) / Path(MEDIA_URL) / archive_name
+    return Path(archive_name)

@@ -46,7 +46,7 @@ class Spectre(models.Model):
     temperature = models.FloatField(default=0.0, validators=NON_NEGATIVE_VALIDATORS)
     density = models.FloatField(default=0.0, validators=NON_NEGATIVE_VALIDATORS)
     target_value = models.CharField(choices=TargetValueChoice.choices, max_length=3)
-    zip_url = models.URLField(blank=True, null=True)
+    zip_file = models.FileField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -30,7 +30,7 @@ class SpectreSerializer(serializers.ModelSerializer):
     density = serializers.FloatField(write_only=True, required=True)
     temperature = serializers.FloatField(write_only=True, required=True)
     target_value = serializers.CharField(write_only=True, required=True)
-    zip_url = serializers.URLField(read_only=True)
+    download_link = serializers.SerializerMethodField()
 
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -41,6 +41,15 @@ class SpectreSerializer(serializers.ModelSerializer):
                 'detail': 'v_start must be less than or equal to v_end for spectral interval'
             })
         return attrs
+
+    def get_download_link(self, obj: Spectre) -> str | None:
+        """
+        Generates link for downloading archive with output data based on the url of the FieldFile object
+        """
+        request = self.context.get('request')
+        if obj.zip_file and request:
+            return request.build_absolute_uri(obj.zip_file.url)
+        return None
 
     class Meta:
         model = Spectre
@@ -55,5 +64,5 @@ class SpectreSerializer(serializers.ModelSerializer):
             "density",
             "temperature",
             "target_value",
-            "zip_url",
+            "zip_file",
         ]

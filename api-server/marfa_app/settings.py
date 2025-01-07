@@ -68,6 +68,12 @@ REST_FRAMEWORK = {
     'UNAUTHENTICATED_USER': None,
 }
 
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    }
+}
+
 ROOT_URLCONF = 'marfa_app.urls'
 
 WSGI_APPLICATION = 'marfa_app.wsgi.application'

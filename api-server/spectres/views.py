@@ -81,9 +81,10 @@ class SpectreView(APIView):
 
         check_output_files(spectre_dir)
         convert_pttable(spectre_dir)
-        spectre.zip_url = generate_zip_archive(spectre_dir)
+        archive_file = generate_zip_archive(spectre_dir)
+        spectre.zip_file.name = archive_file.name
         spectre.save()
-        serializer = self.serializer_class(spectre)
+        serializer = self.serializer_class(spectre, context={'request': request})
         return Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
     def put(self, request: Request) -> Response:
