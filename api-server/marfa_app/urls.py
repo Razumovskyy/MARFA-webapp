@@ -22,7 +22,6 @@ from spectres import urls as atmo_spectre_urls
 from marfa_app import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/v1/', include(atmo_spectre_urls))
 ]
 
