@@ -1,6 +1,13 @@
+"""
+Authors:
+    Mikhail Razumovskii and Denis Astanin, 2025
+
+Description:
+    This module is a part of the MARFA-webapp project.
+"""
 from django.apps import AppConfig
 
 
 class AtmoSpectresConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
     name = 'spectres'
+    verbose_name = 'Absorption Spectres'
