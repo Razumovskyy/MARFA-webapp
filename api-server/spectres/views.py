@@ -6,10 +6,13 @@ Description:
     This module is a part of the MARFA-webapp project.
 """
 import subprocess
+from typing import Any
+
 from django.db import transaction
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from spectres.parsers import convert_pttable
@@ -23,6 +26,21 @@ class SpectreView(APIView):
         Views for interaction with spectre model
     """
     serializer_class = SpectreSerializer
+    throttle_scope = None
+
+    def get_throttles(self) -> list[Any]:
+        """
+        Determines and returns the appropriate throttles for the current request.
+        See the REST_FRAMEWORK constant in settings.py for more information.
+
+        Returns:
+            list[Any]: A list containing instances of `ScopedRateThrottle`.
+        """
+        if self.request.method == 'POST':
+            self.throttle_scope = 'calculating'
+        elif self.request.method == 'PUT':
+            self.throttle_scope = 'plotting'
+        return [ScopedRateThrottle()]
 
     @transaction.atomic
     def post(self, request: Request) -> Response:
@@ -72,4 +90,4 @@ class SpectreView(APIView):
         """
         Handles dynamic data parsing for plots
         """
-        pass
+        return Response()
