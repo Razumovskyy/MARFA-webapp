@@ -13,6 +13,7 @@ import numpy as np
 
 from marfa_app.settings import PT_FILENAME, INFO_FILENAME, OUTPUT_FILENAME
 from spectres.models import Spectre
+from spectres.utils import create_spectre_directory
 
 POINTS_PER_RECORD = 20481
 RECORD_WV_SPAN = 10  # one record spans 10 cm-1 of absorption data
@@ -99,4 +100,5 @@ def plot_parser(spectre: Spectre, vl: float, vr: float) -> list:
     if not spectre.v_start <= vl < vr <= spectre.v_end:
         raise ValueError(f"Left and right boundaries requested for plotting: {vl}, {vr} cm-1 are "
                          f"outside the spectre range: {spectre.v_start}, {spectre.v_end} cm-1.")
-    return base_parser(Path(spectre.zip_file.path), vl, vr)
+    spectre_dir = create_spectre_directory(spectre.pk)
+    return base_parser(spectre_dir / Path(PT_FILENAME), vl, vr)
