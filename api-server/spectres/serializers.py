@@ -64,5 +64,5 @@ class SpectreSerializer(serializers.ModelSerializer):
             "density",
             "temperature",
             "target_value",
-            "zip_file",
+            "download_link",
         ]
