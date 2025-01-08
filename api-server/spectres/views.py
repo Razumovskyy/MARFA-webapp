@@ -6,14 +6,13 @@ Description:
     This module is a part of the MARFA-webapp project.
 """
 import subprocess
-from typing import Any
 
 from django.db import transaction
 from rest_framework import status
+from rest_framework.decorators import api_view, throttle_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
-from rest_framework.views import APIView
 
 from spectres.parsers import convert_pttable
 from spectres.serializers import SpectreSerializer
@@ -21,74 +20,64 @@ from spectres.utils import create_spectre_directory, calculate_absorption_spectr
     check_output_files, generate_log_files
 
 
-class SpectreView(APIView):
+@api_view(['POST'])
+@throttle_classes([ScopedRateThrottle])
+@transaction.atomic
+def submit_calculation(request: Request) -> Response:
     """
-        Views for interaction with spectre model
+    Handles a user's request to calculate the absorption spectrum in PT-table format.
+
+    Validates the input data, performs the spectrum calculation, generates log files, generates
+    a zipped archive of the results, and updates the database. If an error
+    occurs during the calculation or subprocess execution, an appropriate
+    error response is returned.
+
+    Args:
+        request (Request): The HTTP request object containing the parameters for
+                           calculating the absorption spectrum.
+
+    Returns:
+        Response: A response object with a 201 status code and serialized
+                  data of the successfully created spectrum, or a 500 status
+                  code with error details in case of a failure.
     """
-    serializer_class = SpectreSerializer
-    throttle_scope = None
+    serializer = SpectreSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    spectre = serializer.save()
+    spectre_dir = create_spectre_directory(spectre.pk)
+    stdout, stderr = "", ""
 
-    def get_throttles(self) -> list[Any]:
-        """
-        Determines and returns the appropriate throttles for the current request.
-        See the REST_FRAMEWORK constant in settings.py for more information.
+    try:
+        stdout, stderr = calculate_absorption_spectre(spectre)
+    except (subprocess.CalledProcessError, subprocess.SubprocessError) as proc_e:
+        stderr = getattr(proc_e, "stderr", str(proc_e))
+        return Response(
+            data={'detail': f'Error occurred while running Fortran executable. Check the {spectre_dir}/stderr.log'
+                            f' for details.'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    finally:
+        generate_log_files(spectre_dir, stdout, stderr)
 
-        Returns:
-            list[Any]: A list containing instances of `ScopedRateThrottle`.
-        """
-        if self.request.method == 'POST':
-            self.throttle_scope = 'calculating'
-        elif self.request.method == 'PUT':
-            self.throttle_scope = 'plotting'
-        return [ScopedRateThrottle()]
+    check_output_files(spectre_dir)
+    convert_pttable(spectre_dir)
+    archive_file = generate_zip_archive(spectre_dir)
+    spectre.zip_file.name = archive_file.name
+    spectre.save()
+    serializer = SpectreSerializer(spectre, context={'request': request})
+    return Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
-    @transaction.atomic
-    def post(self, request: Request) -> Response:
-        """
-        Handles a user's request to calculate the absorption spectrum in PT-table format.
 
-        Validates the input data, performs the spectrum calculation, generates log files, generates
-        a zipped archive of the results, and updates the database. If an error
-        occurs during the calculation or subprocess execution, an appropriate
-        error response is returned.
+submit_calculation.cls.throttle_scope = 'calculating'
 
-        Args:
-            request (Request): The HTTP request object containing the parameters for
-                               calculating the absorption spectrum.
 
-        Returns:
-            Response: A response object with a 201 status code and serialized
-                      data of the successfully created spectrum, or a 500 status
-                      code with error details in case of a failure.
-        """
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        spectre = serializer.save()
-        spectre_dir = create_spectre_directory(spectre.pk)
-        stdout, stderr = "", ""
+@api_view(['GET'])
+@throttle_classes([ScopedRateThrottle])
+def get_plot(request: Request) -> Response:
+    """
+    Handles dynamic data parsing for plots
+    """
+    return Response()
 
-        try:
-            stdout, stderr = calculate_absorption_spectre(spectre)
-        except (subprocess.CalledProcessError, subprocess.SubprocessError) as proc_e:
-            stderr = getattr(proc_e, "stderr", str(proc_e))
-            return Response(
-                data={'detail': f'Error occurred while running Fortran executable. Check the {spectre_dir}/stderr.log'
-                                f' for details.'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-        finally:
-            generate_log_files(spectre_dir, stdout, stderr)
 
-        check_output_files(spectre_dir)
-        convert_pttable(spectre_dir)
-        archive_file = generate_zip_archive(spectre_dir)
-        spectre.zip_file.name = archive_file.name
-        spectre.save()
-        serializer = self.serializer_class(spectre, context={'request': request})
-        return Response(status=status.HTTP_201_CREATED, data=serializer.data)
-
-    def put(self, request: Request) -> Response:
-        """
-        Handles dynamic data parsing for plots
-        """
-        return Response()
+get_plot.cls.throttle_scope = 'plotting'

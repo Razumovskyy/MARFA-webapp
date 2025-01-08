@@ -6,9 +6,9 @@ Description:
     This module is a part of the MARFA-webapp project.
 """
 from django.urls import path
-
-from spectres.views import SpectreView
+from spectres.views import submit_calculation, get_plot
 
 urlpatterns = [
-    path('calculate_spectre/', SpectreView.as_view())
+    path('calculate_spectre/', submit_calculation),
+    path('get_plot/', get_plot)
 ]
