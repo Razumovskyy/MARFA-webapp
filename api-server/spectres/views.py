@@ -14,8 +14,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 
-from spectres.parsers import convert_pttable
-from spectres.serializers import SpectreSerializer
+from spectres.parsers import convert_pttable, plot_parser
+from spectres.serializers import SpectreSerializer, PlotSpectreSerializer
 from spectres.utils import create_spectre_directory, calculate_absorption_spectre, generate_zip_archive, \
     check_output_files, generate_log_files
 
@@ -77,7 +77,13 @@ def get_plot(request: Request) -> Response:
     """
     Handles dynamic data parsing for plots
     """
-    return Response()
+    serializer = PlotSpectreSerializer(data=request.query_params)
+    serializer.is_valid(raise_exception=True)
+    validated = serializer.validated_data
+    spectre, v1, v2 = validated['spectre'], validated['v1'], validated['v2']
+    parsed_data = plot_parser(spectre, v1, v2)
+    # generate_plot(parsed_data)
+    return Response(status=status.HTTP_200_OK)
 
 
 get_plot.cls.throttle_scope = 'plotting'

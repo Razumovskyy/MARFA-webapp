@@ -12,10 +12,38 @@ from pathlib import Path
 import numpy as np
 
 from marfa_app.settings import PT_FILENAME, INFO_FILENAME, OUTPUT_FILENAME
+from spectres.models import Spectre
 
 POINTS_PER_RECORD = 20481
 RECORD_WV_SPAN = 10  # one record spans 10 cm-1 of absorption data
 RECORD_SIZE = POINTS_PER_RECORD * 4  # 4 bytes per each value
+
+
+def base_parser(pttable_file: Path, v1: float, v2: float) -> list:
+    start_record_number = int(v1 / 10.0)
+    end_record_number = int((v2 - 1) / 10.0)
+    num_records = end_record_number - start_record_number + 1
+    step = RECORD_WV_SPAN / (POINTS_PER_RECORD - 1)
+
+    data = []
+    record_number = start_record_number
+    with open(pttable_file, 'rb') as f:
+        for j in range(1, num_records + 1):
+            seek_position = (record_number - 1) * RECORD_SIZE
+            if seek_position >= os.path.getsize(pttable_file):
+                raise IndexError(f"Record number {record_number} exceeds a file size.")
+            f.seek(seek_position)
+            binary_abs_data = f.read(RECORD_SIZE)  # reads absorption data from one record
+
+            abs_data = np.frombuffer(binary_abs_data, dtype=np.float32)
+
+            in_record_start_wv = RECORD_WV_SPAN * record_number
+            for i in range(POINTS_PER_RECORD):
+                vw = in_record_start_wv + i * step
+                data.append((vw, abs_data[i]))
+
+            record_number = start_record_number + j
+    return data
 
 
 def convert_pttable(directory: Path) -> None:
@@ -60,30 +88,15 @@ def convert_pttable(directory: Path) -> None:
 
     output_file = shutil.copyfile(info_file, directory / OUTPUT_FILENAME)
 
-    start_record_number = int(v1 / 10.0)
-    end_record_number = int((v2 - 1) / 10.0)
-    num_records = end_record_number - start_record_number + 1
-    step = RECORD_WV_SPAN / (POINTS_PER_RECORD - 1)
-
-    data = []
-    record_number = start_record_number
-    with open(pttable_file, 'rb') as f:
-        for j in range(1, num_records + 1):
-            seek_position = (record_number - 1) * RECORD_SIZE
-            if seek_position >= os.path.getsize(pttable_file):
-                raise IndexError(f"Record number {record_number} exceeds a file size.")
-            f.seek(seek_position)
-            binary_abs_data = f.read(RECORD_SIZE)  # reads absorption data from one record
-
-            abs_data = np.frombuffer(binary_abs_data, dtype=np.float32)
-
-            in_record_start_wv = RECORD_WV_SPAN * record_number
-            for i in range(POINTS_PER_RECORD):
-                vw = in_record_start_wv + i * step
-                data.append((vw, abs_data[i]))
-
-            record_number = start_record_number + j
+    data = base_parser(pttable_file, v1, v2)
 
     with open(output_file, 'a') as output:
         for vw, abs_data in data:
             output.write(f"{vw:15.5f} {abs_data:17.7e}\n")
+
+
+def plot_parser(spectre: Spectre, vl: float, vr: float) -> list:
+    if not spectre.v_start <= vl < vr <= spectre.v_end:
+        raise ValueError(f"Left and right boundaries requested for plotting: {vl}, {vr} cm-1 are "
+                         f"outside the spectre range: {spectre.v_start}, {spectre.v_end} cm-1.")
+    return base_parser(Path(spectre.zip_file.path), vl, vr)
