@@ -20,13 +20,32 @@ RECORD_WV_SPAN = 10  # one record spans 10 cm-1 of absorption data
 RECORD_SIZE = POINTS_PER_RECORD * 4  # 4 bytes per each value
 
 
-def base_parser(pttable_file: Path, v1: float, v2: float) -> list:
+def base_parser(pttable_file: Path, v1: float, v2: float) -> tuple[list[np.float32], list[np.float32]]:
+    """
+    Parse data from a pt-table binary file based on left and right spectral boundaries.
+
+    This function reads a binary pt-table file, extracts absorption data within the
+    spectral range defined by v1 and v2, and calculates corresponding wavenumbers.
+    It processes records sequentially within the specified boundaries and returns
+    two lists: one for the calculated wavenumbers and one for the absorption data.
+
+    Args:
+        pttable_file (Path): Path to the binary pt-table file containing absorption data.
+        v1 (float): Left spectral boundary (starting value).
+        v2 (float): Right spectral boundary (ending value).
+
+    Returns:
+        tuple[list[np.float32], list[np.float32]]:
+            - First element: List of wavenumber values (vw_data) as np.float32.
+            - Second element: List of corresponding absorption values as np.float32.
+    """
     start_record_number = int(v1 / 10.0)
     end_record_number = int((v2 - 1) / 10.0)
     num_records = end_record_number - start_record_number + 1
     step = RECORD_WV_SPAN / (POINTS_PER_RECORD - 1)
 
-    data = []
+    vw_data = []
+    absorption_data = []
     record_number = start_record_number
     with open(pttable_file, 'rb') as f:
         for j in range(1, num_records + 1):
@@ -41,10 +60,11 @@ def base_parser(pttable_file: Path, v1: float, v2: float) -> list:
             in_record_start_wv = RECORD_WV_SPAN * record_number
             for i in range(POINTS_PER_RECORD):
                 vw = in_record_start_wv + i * step
-                data.append((vw, abs_data[i]))
+                vw_data.append(np.float32(vw))
+                absorption_data.append(np.float32(abs_data[i]))
 
             record_number = start_record_number + j
-    return data
+    return vw_data, absorption_data
 
 
 def convert_pttable(directory: Path) -> None:
@@ -54,22 +74,9 @@ def convert_pttable(directory: Path) -> None:
     It reads the start and end wavenumbers from an `info.txt` file in the same directory, extracts 
     the relevant absorption data, and formats it into a readable table.
 
-    Parameters:
+    Args:
         directory (Path): The directory containing the PT-table binary file 
                                 and the associated file.
-
-    Raises:
-        ValueError: If the `info.txt` file is corrupted or does not contain valid start and end 
-                    wavenumber information.
-        IndexError: If the record number, record size and file size are inconsistent.
-        FileNotFoundError: If `PT_FILENAME` or `info.txt` is missing in the spectre directory.
-
-    Output:
-        - Copies the contents of `info.txt` file to the beginning of the `output.dat` file.
-        - Appends formatted wavenumber and absorption coefficient data to `output.dat`.
-          Each line contains:
-              - Wavenumber (float): The specific wavenumber in cm⁻¹.
-              - Absorption coefficient (float): The corresponding absorption value in scientific notation.
     """
 
     pttable_file = directory / PT_FILENAME
@@ -89,16 +96,29 @@ def convert_pttable(directory: Path) -> None:
 
     output_file = shutil.copyfile(info_file, directory / OUTPUT_FILENAME)
 
-    data = base_parser(pttable_file, v1, v2)
+    vw_data, absorption_data = base_parser(pttable_file, v1, v2)
 
     with open(output_file, 'a') as output:
-        for vw, abs_data in data:
+        for vw, abs_data in zip(vw_data, absorption_data):
             output.write(f"{vw:15.5f} {abs_data:17.7e}\n")
 
 
-def plot_parser(spectre: Spectre, vl: float, vr: float) -> list:
+def plot_parser(spectre: Spectre, vl: float, vr: float) -> tuple[list[np.float32], list[np.float32]]:
+    """
+    Validates input boundaries for plots requests
+
+    Args:
+        spectre (Spectre): Spectre instance
+        vl (float): left boundary
+        vr (float): right boundary
+
+    Returns:
+        list[np.float32]: x-axis data
+        list[np.float32]: y-axis data
+    """
     if not spectre.v_start <= vl < vr <= spectre.v_end:
         raise ValueError(f"Left and right boundaries requested for plotting: {vl}, {vr} cm-1 are "
                          f"outside the spectre range: {spectre.v_start}, {spectre.v_end} cm-1.")
     spectre_dir = create_spectre_directory(spectre.pk)
-    return base_parser(spectre_dir / Path(PT_FILENAME), vl, vr)
+    x_data, y_data = base_parser(spectre_dir / Path(PT_FILENAME), vl, vr)
+    return x_data, y_data
