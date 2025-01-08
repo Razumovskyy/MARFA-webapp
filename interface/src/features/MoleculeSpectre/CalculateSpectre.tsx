@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { CircularProgress, Typography, useTheme } from "@mui/material"
 import { Control, Controller, FieldValues, FormProvider, useForm } from "react-hook-form"
 import {
-  getSpectre, calculateSpectreParamsType, chiFactors, formDataToRequestMapper,
+  getSpectre, calculateSpectreParamsType, formDataToRequestMapper,
   initialFormValues, moleculeOptions,
   moleculeSpectreFormData,
   moleculeSpectreValidationSchema, spectralLinesDatabases, targetValues, atmospheres,
@@ -10,8 +10,6 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Autocomplete, Button, TextField } from "@/shared/ui"
 import * as Styled from "./MoleculeSpectre.styles"
-import { FileUploader } from "@/shared/assets"
-import { AxiosResponse } from "axios"
 import { useMolecularSpectreData } from "@/entities/MoleculeSpectre/models/MoleculeSpectreContext"
 
 export const CalculateSpectre = () => {
@@ -37,25 +35,13 @@ export const CalculateSpectre = () => {
 
   const onSubmit = (data: moleculeSpectreFormData) => {
     setIsLoading(true)
-    if (!data.file && !data.atmosphere) {
-      setError("atmosphere", {
-        type: "manual",
-        message: "Please choose the atmosphere or upload a file", // Сообщение об ошибке
-      })
-      setIsLoading(false)
-      return
-    }
     getSpectre(formDataToRequestMapper<moleculeSpectreFormData, calculateSpectreParamsType>(data, isFile)).then(res => {
       setIsLoading(false)
       setId(res.data.id)
-      setZipUrl(res.data.zip_url)
+      setZipUrl(res.data.download_link)
       setScreenState(1)
     }).catch(err => {
-        if (err.response.status === 415) {
-          setError("file", { type: "server", message: "File is not valid" })
-        }
-      },
-    ).finally(() => {
+    }).finally(() => {
       setIsLoading(false)
     })
   }
@@ -157,21 +143,6 @@ export const CalculateSpectre = () => {
             )}
           />
           <Controller
-            name="chi_factor"
-            control={control as Control<FieldValues>}
-            render={({ field }) => (
-              <Autocomplete
-                options={chiFactors}
-                label={"Choose chi-factor"}
-                onChange={(event, value) => field.onChange(value)}
-                value={field.value}
-                style={{ width: theme.spacing(76) }}
-                error={!!errors.chi_factor}
-                errorMessage={errors.chi_factor?.message}
-              />
-            )}
-          />
-          <Controller
             name="target_value"
             control={control as Control<FieldValues>}
             render={({ field }) => (
@@ -188,44 +159,51 @@ export const CalculateSpectre = () => {
               />
             )}
           />
-          <Styled.FieldsContainer sx={{
-            [theme.breakpoints.down("sm")]: {
-              flexDirection: "column",
-            },
-          }}>
-            <Controller name="atmosphere"
-                        control={control as Control<FieldValues>}
-                        render={({ field }) => (
-                          <Autocomplete onChange={(event, value) => field.onChange(value)}
-                                        value={field.value}
-                                        options={atmospheres}
-                                        style={{ width: theme.spacing(76) }}
-                                        error={!!errors.atmosphere}
-                                        errorMessage={errors.atmosphere?.message}
-                                        label={"Choose the atmospheric profile:"}
-                                        disabled={isFile}
-                          />
-                        )}
-            />
-            <Typography sx={{ alignSelf: "baseline", marginTop: "6px" }} variant={"body1"} fontSize={"medium"}
-                        fontWeight={"medium"}>OR</Typography>
-            <Controller name="file"
-                        control={control as Control<FieldValues>}
-                        render={({ field }) => (
-                          <Styled.UploadFileContainer>
-                            <FileUploader file={field.value} setFile={(e) => {
-                              field.onChange(e)
-                              setIsFile(!!e)
-                            }} errors={errors.file?.message} />
-                            <Typography
-                              sx={{ display: "flex", flexDirection: "row", wrap: "no-wrap", width: "fit-content" }}
-                              variant={"caption"} fontWeight={"medium"}>Before uploading review the
-                              required <Styled.GoToDescriptionText
-                                href={"format"}>data format</Styled.GoToDescriptionText></Typography>
-                          </Styled.UploadFileContainer>
-                        )}
-            />
-          </Styled.FieldsContainer>
+          <Controller
+            name="temperature"
+            control={control as Control<FieldValues>}
+            render={({ field }) => (
+              <TextField
+                value={field.value}
+                {...field}
+                style={{ width: theme.spacing(76) }}
+                label={"Temperature"}
+                variant={"outlined"}
+                error={!!errors.temperature}
+                helperText={errors.temperature?.message}
+              />
+            )}
+          />
+          <Controller
+            name="pressure"
+            control={control as Control<FieldValues>}
+            render={({ field }) => (
+              <TextField
+                value={field.value}
+                {...field}
+                style={{ width: theme.spacing(76) }}
+                label={"Pressure"}
+                variant={"outlined"}
+                error={!!errors.pressure}
+                helperText={errors.pressure?.message}
+              />
+            )}
+          />
+          <Controller
+            name="density"
+            control={control as Control<FieldValues>}
+            render={({ field }) => (
+              <TextField
+                value={field.value}
+                {...field}
+                style={{ width: theme.spacing(76) }}
+                label={"Density"}
+                variant={"outlined"}
+                error={!!errors.density}
+                helperText={errors.density?.message}
+              />
+            )}
+          />
           <Styled.SendDataContainer>
             <Button disabled={isLoading} onClick={handleSubmit(onSubmit)} variant={"contained"}
                     color={"primary"}>Calculate</Button>

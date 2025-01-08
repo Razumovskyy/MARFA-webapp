@@ -18,6 +18,7 @@ SECRET_KEY = env('SECRET_KEY')
 if DJANGO_ENV == 'development':
     DEBUG = True
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+    CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
     CURRENT_HOST = 'http://127.0.0.1:8000'
     MEDIA_URL = '/media/'
     DATABASES = {
@@ -47,11 +48,13 @@ MEDIA_ROOT = Path(BASE_DIR) / 'media'
 SPECTRES_ROOT = Path(MEDIA_ROOT) / 'users'
 
 INSTALLED_APPS = [
+    'corsheaders',
     'rest_framework',
     'spectres',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

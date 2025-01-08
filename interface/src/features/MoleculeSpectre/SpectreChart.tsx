@@ -5,9 +5,7 @@ import * as Styled from "./MoleculeSpectre.styles"
 import { Control, Controller, FieldValues, FormProvider, useForm } from "react-hook-form"
 import {
   initialFormValues,
-  moleculeSpectreFormData,
-  moleculeSpectreValidationSchema,
-  resolutionsChart, spectralLinesDatabases,
+  resolutionsChart
 } from "@/entities/MoleculeSpectre"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { CircularProgress, Typography, useTheme } from "@mui/material"
@@ -87,39 +85,6 @@ export const SpectreChart = ({}) => {
                           />
                         )}
             /> </Styled.ChartParamContainer>
-          <Styled.ChartParamContainer>
-            <Typography>Set layer number to draw the graph:</Typography>
-            <Controller name="level"
-                        control={control as Control<FieldValues>}
-                        render={({ field }) => (
-                          <TextField value={field.value}
-                                     {...field}
-                                     style={{ width: "137px" }}
-                                     variant={"outlined"}
-                                     label={""}
-                                     error={!!errors.level}
-                                     helperText={errors.level?.message}
-                          />
-                        )}
-            /> </Styled.ChartParamContainer>
-          <Controller
-            name="resolution"
-            control={control as Control<FieldValues>}
-            render={({ field }) => (
-              <Autocomplete
-                options={resolutionsChart}
-                {...field}
-                label={"Choose chart resolution"}
-                onChange={(event, value) =>
-                  field.onChange(!(value) || value["value"] || null)
-                }
-                value={field.value}
-                style={{ width: theme.spacing(76) }}
-                error={!!errors.resolution}
-                errorMessage={errors.resolution?.message}
-              />
-            )}
-          />
           {!!image && <Styled.ImageChart key={image} width={1200} height={800} alt={"Spectre chart"}
                                          src={image} />}
           <Styled.FetchChartContainer>

@@ -15,15 +15,13 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
     .typeError("Enter a number"),
   spectral_line: yup.object().required("Choose a value."),
   line_cut_off_condition: yup.number().required("Enter a value"),
-  chi_factor: yup.object().required("Choose a value"),
   target_value: yup.object().required("Enter a value."),
-  file: yup.mixed().notRequired(),
-  atmosphere: yup.object().notRequired()
+  temperature: yup.number().required("Enter a value"),
+  pressure: yup.number().required("Enter a value"),
+  density: yup.number().required("Enter a value"),
 })
 
 export const chartSpectreValidationSchema = yup.object().shape({
   v1: yup.number().required("Enter a number").typeError("Enter a number"),
   v2: yup.number().required("Enter a number").typeError("Enter a number"),
-  resolution: yup.string().required("testvalue1").typeError("testvalue2"),
-  level: yup.number().required("Enter a number").typeError("Enter a number")
 })

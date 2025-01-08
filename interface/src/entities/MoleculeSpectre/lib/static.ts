@@ -20,22 +20,17 @@ export const atmospheres = [
   { label: "VenusCO2 60km", value: "VenusCO2_60km.dat"}
 ]
 
-export const chiFactors = [
-  { label: "None", value: "none"},
-  { label: "tonkov", value: "tonkov"},
-  { label: "pollack", value: "pollack"},
-  { label: "perrin", value: "perrin"}
-]
 export const initialFormValues: moleculeSpectreFormData | any | undefined = {
   species: null,
   first_spectral_interval: null,
   second_spectral_interval: null,
   spectral_line: null,
   line_cut_off_condition: null,
-  chi_factor: null,
   target_value: null,
-  file: null,
-  atmosphere: null
+  atmosphere: null,
+  temperature: null,
+  pressure: null,
+  density: null
 }
 
 export const resolutionsChart = [
