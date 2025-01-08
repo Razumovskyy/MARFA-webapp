@@ -81,7 +81,7 @@ def get_plot(request: Request) -> Response:
     serializer.is_valid(raise_exception=True)
     validated = serializer.validated_data
     spectre, v1, v2 = validated['spectre'], validated['v1'], validated['v2']
-    parsed_data = plot_parser(spectre, v1, v2)
+    x_data, y_data = plot_parser(spectre, v1, v2)
     # generate_plot(parsed_data)
     return Response(status=status.HTTP_200_OK)
 
