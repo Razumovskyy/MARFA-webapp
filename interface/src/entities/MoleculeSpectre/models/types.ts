@@ -6,8 +6,8 @@ export type moleculeSpectreFormData = {
   line_cut_off_condition: number,
   chi_factor: { label: string, value: string } | null,
   target_value: { label: string, value: string} | null,
-  file: object | null,
-  atmosphere: null | string | object
+  temperature: number
+  pressure: number
 }
 
 export type chartSpectreFormData = {

@@ -26,6 +26,7 @@ export const chiFactors = [
   { label: "pollack", value: "pollack"},
   { label: "perrin", value: "perrin"}
 ]
+
 export const initialFormValues: moleculeSpectreFormData | any | undefined = {
   species: null,
   first_spectral_interval: null,
@@ -34,8 +35,8 @@ export const initialFormValues: moleculeSpectreFormData | any | undefined = {
   line_cut_off_condition: null,
   chi_factor: null,
   target_value: null,
-  file: null,
-  atmosphere: null
+  pressure: null,
+  temperature: null
 }
 
 export const resolutionsChart = [

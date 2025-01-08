@@ -6,7 +6,8 @@ export type calculateSpectreParamsType = {
   v_end: string
   spectral_line_database: string,
   target_value: string,
-  file: any,
+  pressure: number,
+  temperature: number
 }
 
 export type commandCreateResponse = {

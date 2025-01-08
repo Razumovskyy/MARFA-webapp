@@ -17,8 +17,8 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
   line_cut_off_condition: yup.number().required("Enter a value"),
   chi_factor: yup.object().required("Choose a value"),
   target_value: yup.object().required("Enter a value."),
-  file: yup.mixed().notRequired(),
-  atmosphere: yup.object().notRequired()
+  pressure: yup.number().required("Enter a value"),
+  temperature: yup.number().required("Enter a value"),
 })
 
 export const chartSpectreValidationSchema = yup.object().shape({

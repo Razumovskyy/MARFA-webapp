@@ -7,8 +7,8 @@ export function formDataToRequestMapper<T, P>(data: T, isFile: boolean): P {
     v_end: data.second_spectral_interval,
     database_slug: data.spectral_line.value,
     target_value: data.target_value?.value,
-    file: isFile ? data.file : undefined,
-    spectre_type: isFile ? "custom" : "default",
+    pressure: data.pressure,
+    temperature: data.temperature,
     file_name: !isFile ? data.atmosphere.value : undefined
   } as P
 }
