@@ -1,0 +1,134 @@
+"""
+Authors:
+    Mikhail Razumovskii and Denis Astanin, 2025
+
+Description:
+    This module is a part of the MARFA-webapp project.
+"""
+import shutil
+import subprocess
+from pathlib import Path
+from typing import Tuple
+
+from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, INFO_FILENAME, PT_FILENAME
+from spectres.models import Spectre
+
+
+def create_spectre_directory(identifier: int) -> Path:
+    """
+    Creates a directory for the spectre calculation based on its identifier.
+
+    Args:
+        identifier (int): The unique identifier for the spectre.
+
+    Returns:
+        Path: The path to the created spectre directory.
+    """
+    directory = Path(SPECTRES_ROOT) / str(identifier)
+    directory.mkdir(parents=True, exist_ok=True)
+    return directory
+
+
+def calculate_absorption_spectre(spectre: Spectre) -> Tuple[str, str]:
+    """
+    Executes the Fortran executable to perform absorption calculations and
+    generate a PT-table with results based on the given spectral parameters.
+
+    Args:
+        spectre (Spectre): An instance of the `Spectre` class containing
+            the necessary parameters for the absorption calculation
+
+    Returns:
+        Tuple[str, str]: A tuple containing:
+            - stdout (str): The standard output from the Fortran executable.
+            - stderr (str): The standard error from the Fortran executable.
+    """
+    arguments = [
+        'fpm', 'run', 'marfa', '--',
+        f'{spectre.species}',
+        f'{spectre.v_start}',
+        f'{spectre.v_end}',
+        f'{spectre.database_slug}',
+        f'{spectre.line_cut_off}',
+        f'{spectre.pressure}',
+        f'{spectre.temperature}',
+        f'{spectre.density}',
+        f'{spectre.target_value}',
+        f'{spectre.pk}',
+    ]
+    directory = Path(BASE_DIR) / 'core'
+
+    result = subprocess.run(
+        args=arguments,
+        cwd=directory,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    return result.stdout, result.stderr
+
+
+def generate_log_files(directory: Path, stdout_content: str, stderr_content: str) -> None:
+    """
+    Creates log files (`stdout.log` and `stderr.log`) in the specified directory
+    based on the results of the absorption calculation.
+
+    Args:
+        directory (Path): The directory where the log files will be generated.
+        stdout_content (str): The content to be written to `stdout.log`.
+        stderr_content (str): The content to be written to `stderr.log`.
+
+    Returns:
+        None: This function does not return anything.
+    """
+
+    log_files = {
+        'stdout.log': stdout_content,
+        'stderr.log': stderr_content,
+    }
+
+    for basename, content in log_files.items():
+        logfile = directory / basename
+        logfile.write_text(content or "")
+
+
+def check_output_files(directory: Path) -> bool:
+    """
+    Checks for the existence of required output files in the specified directory.
+
+    This function verifies if the generated PT-table file (`PT_FILENAME`)
+    and the metadata file (`info.txt`) exist in the given directory. If either
+    of the files is missing, it raises a `FileNotFoundError`.
+
+    Args:
+        directory (Path): The directory path where the output files are expected
+            to be located.
+
+    Returns:
+        bool: Returns `True` if both files exist.
+    """
+    if not (Path(directory / PT_FILENAME).is_file() and Path(directory / INFO_FILENAME).is_file()):
+        raise FileNotFoundError('Either PT-table file or info file does not exist.')
+    return True
+
+
+def generate_zip_archive(directory: Path) -> Path:
+    """
+    Generates archive of the spectre directory inside the MEDIA_ROOT directory.
+    The archive is named like <id>.zip, where <id> is the unique identifier for the spectre.
+    Zip archive populates the FileField of the Spectre model, so it must be saved inside the
+    MEDIA_ROOT directory.
+
+    Args:
+        directory(Path): The spectre directory.
+
+    Returns:
+        Path: The path to the generated zip archive.
+    """
+    archive_name = shutil.make_archive(
+        base_name=str(Path(MEDIA_ROOT) / directory.name),
+        format='zip',
+        root_dir=SPECTRES_ROOT,
+        base_dir=str(directory.name),
+    )
+    return Path(archive_name)
