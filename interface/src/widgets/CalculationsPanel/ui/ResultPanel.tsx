@@ -31,10 +31,10 @@ export const ResultPanel = () => {
             <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontStyle: "italic" }}>See the <Link
               href={"/format"}>data format</Link></Typography>
           </Styled.DownloadDataContainer>
-          <Typography sx={{ fontStyle: "italic", color: "#1E4E79", alignSelf: "center" }} variant={"caption"}
-                      fontWeight={"large"}>
-            *With a large number of levels, file loading may take several minutes.
-          </Typography>
+          {/*<Typography sx={{ fontStyle: "italic", color: "#1E4E79", alignSelf: "center" }} variant={"caption"}*/}
+          {/*            fontWeight={"large"}>*/}
+          {/*  *With a large number of levels, file loading may take several minutes.*/}
+          {/*</Typography>*/}
         </Styled.ResultPanelMainDiv>
       }
     </>

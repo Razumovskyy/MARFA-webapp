@@ -1,7 +1,7 @@
 import * as yup from "yup"
 
 export const moleculeSpectreValidationSchema = yup.object().shape({
-  species: yup.object().required("Choose a value."),
+  species: yup.object().required("Select a value."),
   first_spectral_interval: yup
     .number()
     .required("Enter a value.")
@@ -13,7 +13,7 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
     .number()
     .required("Enter a value.")
     .typeError("Enter a number"),
-  spectral_line: yup.object().required("Choose a value."),
+  spectral_line: yup.object().required("Select a value."),
   line_cut_off_condition: yup.number().required("Enter a value"),
   target_value: yup.object().required("Enter a value."),
   temperature: yup.number().required("Enter a value"),

@@ -63,7 +63,7 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 size={"medium"}
                 options={moleculeOptions}
-                label={"Choose species"}
+                label={"Select species ..."}
                 onChange={(event, value) => {
                   setShowCO2Fields(!!value && value["label"] === "CO2")
                   field.onChange(value)
@@ -77,7 +77,7 @@ export const CalculateSpectre = () => {
           />
           <Styled.SpectreIntervalContainer>
             <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontSize: "14px" }}>Spectral interval
-              (cm-1):</Typography>
+              (e.g., 500–1500 cm⁻¹):</Typography>
             <Styled.FieldsContainer>
               <Controller
                 name="first_spectral_interval"
@@ -118,7 +118,7 @@ export const CalculateSpectre = () => {
             render={({ field }) => (
               <Autocomplete
                 options={spectralLinesDatabases}
-                label={"Choose Spectral Line Database"}
+                label={"Select spectral line database ..."}
                 onChange={(event, value) => field.onChange(value)}
                 value={field.value}
                 style={{ width: theme.spacing(76) }}
@@ -135,27 +135,10 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Set line cut-off condition (0-500 cm^-1)"}
+                label={"Line cut-off condition"}
                 variant={"outlined"}
                 error={!!errors.line_cut_off_condition}
                 helperText={errors.line_cut_off_condition?.message}
-              />
-            )}
-          />
-          <Controller
-            name="target_value"
-            control={control as Control<FieldValues>}
-            render={({ field }) => (
-              <Autocomplete
-                options={targetValues}
-                label={"Choose target value"}
-                onChange={(event, value) =>
-                  field.onChange(value)
-                }
-                value={field.value}
-                style={{ width: theme.spacing(76) }}
-                error={!!errors.target_value}
-                errorMessage={errors.target_value?.message}
               />
             )}
           />
@@ -167,7 +150,7 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Temperature"}
+                label={"Temperature (e.g. 300 K)"}
                 variant={"outlined"}
                 error={!!errors.temperature}
                 helperText={errors.temperature?.message}
@@ -182,7 +165,7 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Pressure"}
+                label={"Pressure (e.g. 1 atm)"}
                 variant={"outlined"}
                 error={!!errors.pressure}
                 helperText={errors.pressure?.message}
@@ -197,12 +180,29 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Density"}
+                label={"Number Density (e.g. 1E25 cm⁻²·km⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.density}
                 helperText={errors.density?.message}
               />
             )}
+          />
+          <Controller
+              name="target_value"
+              control={control as Control<FieldValues>}
+              render={({ field }) => (
+                  <Autocomplete
+                      options={targetValues}
+                      label={"Select target value"}
+                      onChange={(event, value) =>
+                          field.onChange(value)
+                      }
+                      value={field.value}
+                      style={{ width: theme.spacing(76) }}
+                      error={!!errors.target_value}
+                      errorMessage={errors.target_value?.message}
+                  />
+              )}
           />
           <Styled.SendDataContainer>
             <Button disabled={isLoading} onClick={handleSubmit(onSubmit)} variant={"contained"}
