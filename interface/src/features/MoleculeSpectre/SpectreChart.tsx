@@ -57,7 +57,7 @@ export const SpectreChart = ({}) => {
       <FormProvider {...methods}>
         <Styled.ChartFormContainer>
           <Styled.ChartParamContainer>
-            <Typography>Spectral interval (cm-1):</Typography>
+            <Typography>Spectral interval</Typography>
             <Controller name="v1"
                         control={control as Control<FieldValues>}
                         render={({ field }) => (
