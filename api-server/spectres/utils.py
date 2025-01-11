@@ -12,6 +12,8 @@ from typing import Tuple
 
 from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, INFO_FILENAME, PT_FILENAME
 from spectres.models import Spectre
+import matplotlib.pyplot as plt
+import io
 
 
 def create_spectre_directory(identifier: int) -> Path:
@@ -132,3 +134,33 @@ def generate_zip_archive(directory: Path) -> Path:
         base_dir=str(directory.name),
     )
     return Path(archive_name)
+
+
+def generate_plot(x_data, y_data):
+    """
+    Генерирует график с использованием matplotlib и возвращает его в формате SVG.
+
+    :param x_data: Данные по оси X
+    :param y_data: Данные по оси Y
+    :return: Строка с содержимым SVG
+    """
+    fig, ax = plt.subplots()
+
+    ax.plot(x_data, y_data, color='b', linestyle='-', label='Voigt (125)')
+
+    ax.plot(x_data, y_data, color='g', linestyle='-', label='Tonkov (350)')
+
+    ax.set_xlabel(r'Wavenumber [$\mathregular{cm^{-1}}$]')
+    ax.set_ylabel(r'Absorption cross-section [cm$^2$ mol$^{-1}$]')
+    ax.grid(which='major', axis='both', color='gray', alpha=0.5)
+
+    ax.minorticks_on()
+    ax.tick_params(axis='y', which='both', right=True)
+
+    svg_buffer = io.StringIO()
+    plt.close(fig)
+
+    svg_content = svg_buffer.getvalue()
+    svg_buffer.close()
+
+    return svg_content
