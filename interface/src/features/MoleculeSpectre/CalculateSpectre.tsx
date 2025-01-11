@@ -118,7 +118,7 @@ export const CalculateSpectre = () => {
             render={({ field }) => (
               <Autocomplete
                 options={spectralLinesDatabases}
-                label={"Select spectral line database ..."}
+                label={"Select spectral database ..."}
                 onChange={(event, value) => field.onChange(value)}
                 value={field.value}
                 style={{ width: theme.spacing(76) }}
@@ -135,7 +135,7 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Line cut-off condition"}
+                label={"Line cut-off condition (e.g. 125 cm⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.line_cut_off_condition}
                 helperText={errors.line_cut_off_condition?.message}
