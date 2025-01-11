@@ -80,7 +80,11 @@ program main
 
     ! Alternative -- using Ideal gas law and normalization on 1 atm pressure
     ! Attention: density is a number denisty in units: 1/(cm^2 * km); 1/(cm^2*km) = 10/m^3
-    pSelf = density * 10. * BOLsi * temperature / standardAtmosphericPressure
+    if (isVAC) then
+        pSelf = density * 10. * BOLsi * temperature / standardAtmosphericPressure
+    else
+        pSelf = 0.
+    end if
     ! Alternative: based on the Loschmidt number, check the `LOSCHMIDT` valur for accuracy
     ! pSelf = density * 10. / LOSCHMIDT * temperature/stTemperature
     
