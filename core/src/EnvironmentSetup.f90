@@ -15,6 +15,7 @@ module EnvironmentSetup
     real :: inputPressure, inputTemperature, inputNumberDenisty
     character(len=30) :: targetValue, targetValuecla
     character(len=10) :: uuid
+    logical :: isVAC
     logical :: isUUID
 
     ! Parameters and variables for constructing directories names !
@@ -38,8 +39,12 @@ contains
         ! Get a number of command-line arguments
         argc = command_argument_count()
 
+        isUUID = .false.
+        isVAC = .false.
+
         ! Establishing input parameters based on command line arguments
         do l = 1, command_argument_count()
+
             select case (l)
             case (1)
                 call get_command_argument(l, inputMolecule)
@@ -80,28 +85,39 @@ contains
                     write(0, *) 'ValueError: Temperature must be greater than 20 and less than 1000 K'
                     stop 32
                 end if
-            case(8)
-                call get_command_argument(l, inputNumberDensityCla)
-                inputNumberDensityClaTrimmed = trim(inputNumberDensityCla)
-                read(inputNumberDensityClaTrimmed, *) density
-            case (9)
+            case (8)
                 call get_command_argument(l, targetValuecla)
                 ! Set ACS or VAC with validation
                 targetValue = trim(targetValuecla)
                 select case (targetValue)
-                case ('ACS', 'VAC')
-                    ! Valid targetValue; proceed as normal
+                case ('ACS')
+
+                case ('VAC')
+                    isVAC = .true.
                 case default
                     write (0, *) 'ValueError: Invalid targetValue "', trim(targetValue), '". & 
                                 Must be either "ACS" (Absorption cross-section) or &
                                 "VAC" (Volume absorption coefficient).'
                     stop 24
                 end select
+            case(9)
+                call get_command_argument(l, inputNumberDensityCla)
+                inputNumberDensityClaTrimmed = trim(inputNumberDensityCla)
+                if (isVAC) then
+                    read(inputNumberDensityClaTrimmed, *) density
+                else
+                    density = 1.
+                end if
             case (10)
                 call get_command_argument(l, uuid)
                 isUUID = .true.
             end select
         end do
+        
+        if (.not. isUUID) then
+            write (0, *) 'CommandLineArgumentMissing: uuid positive integer must be provided'
+            stop 65
+        end if
     end subroutine readCommandLineArguments
 
     
