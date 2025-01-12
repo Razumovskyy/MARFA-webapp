@@ -18,6 +18,7 @@ from spectres.parsers import convert_pttable, plot_parser
 from spectres.serializers import SpectreSerializer, PlotSpectreSerializer
 from spectres.utils import create_spectre_directory, calculate_absorption_spectre, generate_zip_archive, \
     check_output_files, generate_log_files, generate_plot
+from spectres.models import Spectre
 
 
 @api_view(['POST'])
@@ -82,7 +83,8 @@ def get_plot(request: Request) -> Response:
     validated = serializer.validated_data
     spectre, v1, v2 = validated['spectre'], validated['v1'], validated['v2']
     x_data, y_data = plot_parser(spectre, v1, v2)
-    plot = generate_plot(x_data, y_data)
+    y_title = Spectre.objects.get(id=spectre.pk).target_value
+    plot = generate_plot(x_data, y_data, y_title)
     return Response(status=status.HTTP_200_OK, data={"plot": plot})
 
 

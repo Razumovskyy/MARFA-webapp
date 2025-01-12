@@ -37,22 +37,6 @@ export const FieldsContainer = styled("div")(({ theme }) => ({
   gap: theme.spacing(2),
 }))
 
-export const UploadFileContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(1),
-  alignItems: "flex-start",
-  justifyContent: "flex-start"
-}))
-
-export const GoToDescriptionText = styled(Link)(({ theme }) => ({
-  color: "#0000EE",
-  textDecoration: "underline",
-  cursor: "pointer",
-  width: "fit-content",
-  marginLeft: theme.spacing(1)
-}))
-
 export const SpectreChartMainContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -70,7 +54,7 @@ export const ChartFormContainer = styled("form")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "flex-start",
-  gap: theme.spacing(6)
+  gap: theme.spacing(6),
 }))
 
 export const ChartParamContainer = styled("div")(({ theme }) => ({
@@ -84,10 +68,13 @@ export const ChartParamContainer = styled("div")(({ theme }) => ({
   }
 }))
 
-export const ImageChart = styled(Image)(({ theme }) => ({
+export const ChartContainer = styled("div")(({ theme }) => ({
   height: "auto",
-  width: "100%",
-  alignSelf: "center"
+  display: "flex",
+  alignSelf: "center",
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center"
 }))
 
 export const FetchChartContainer = styled("div")(({ theme }) => ({

@@ -117,6 +117,7 @@ export const CalculateSpectre = () => {
             control={control as Control<FieldValues>}
             render={({ field }) => (
               <Autocomplete
+                disabled={true}
                 options={spectralLinesDatabases}
                 label={"Select spectral database ..."}
                 onChange={(event, value) => field.onChange(value)}

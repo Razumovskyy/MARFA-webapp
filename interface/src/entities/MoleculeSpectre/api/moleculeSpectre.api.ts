@@ -9,4 +9,4 @@ export const getSpectre = async (params: Record<string, string | number | undefi
   axios.post("/calculate_spectre/", { ...params })
 
 export const fetchChart = async (params: chartSpectreFormData, id: number)=>
-  axios.put("/calculate_spectre/", { ...params, id: id })
+  axios.get(`/get_plot/`, { params: { ...params, pk: id } })

@@ -9,6 +9,7 @@ const getStyles = (width?: string | number, style?: IStyle) => ({
   width: "100%",
   ".MuiSvgIcon-fontSizeMedium": {
     scale: "1.5",
+    marginTop: "5px",
   },
   ...style,
 })
