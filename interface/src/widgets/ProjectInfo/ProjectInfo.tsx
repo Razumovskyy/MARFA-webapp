@@ -21,16 +21,17 @@ export const ProjectInfo = () => {
             This web application features a lightweight version of the <b>MARFA</b> code. MARFA is a Fortran-based tool
             specifically designed to calculate volume molecular absorption coefficients or monochromatic absorption
             cross-sections, utilizing initial spectroscopic data and a given atmospheric profile.
-            For more details, please visit the repository's source code page:{" "}
+            To utilize the full capabilities of the model, such as calculating spectra for all atmospheric levels
+            simultaneously and applying ꭓ-corrections, we recommend downloading and running the source code available at:{" "}
             <a href="https://github.com/Razumovskyy/MARFA" target="_blank" rel="noopener noreferrer">
                 https://github.com/Razumovskyy/MARFA
             </a>
         </Typography>
         <Typography variant="body1" fontSize="medium" fontWeight="medium" gutterBottom>
-            The MARFA tool is described in detail in the following scientific paper:{" "}
+            The MARFA tool is described in detail in the following preprint:{" "}
             <br></br>
             <br></br>
-                Razumovskiy, Mikhail, Boris Fomin, and Denis Astanin.
+                Razumovskiy Mikhail, Boris Fomin, and Denis Astanin.
                 <a
                     href="https://arxiv.org/abs/2411.03418"
                     target="_blank"
@@ -45,17 +46,18 @@ export const ProjectInfo = () => {
             This platform was developed by:
             <ul>
                 <li>
-                    Mikhail Razumovskiy -{" "}
+                    <b>Mikhail Razumovskiy</b>, scientific researcher and web developer:{" "}
                     <a
                         href="https://github.com/Razumovskyy"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
                         https://github.com/Razumovskyy
-                    </a>
+                    </a>{", "}
+                    mrazumovskyy@gmail.com
                 </li>
                 <li>
-                    Denis Astanin -{" "}
+                    <b>Denis Astanin</b>, web developer at BiTronics Lab:{" "}
                     <a
                         href="https://github.com/BitronicsDev"
                         target="_blank"
@@ -66,23 +68,6 @@ export const ProjectInfo = () => {
                 </li>
             </ul>
         </Typography>
-      {/*<Styled.FeaturesContainer>*/}
-      {/*  <Typography variant={"h4"} color={"black"}>Features:</Typography>*/}
-      {/*  <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}>*/}
-      {/*    <ul>*/}
-      {/*      {features.map((e, index) =>*/}
-      {/*        <li key={index} dangerouslySetInnerHTML={{ __html: e }}></li>,*/}
-      {/*      )}*/}
-      {/*    </ul>*/}
-      {/*  </Typography>*/}
-      {/*</Styled.FeaturesContainer>*/}
-      {/*<Styled.SupportContainer>*/}
-      {/*  <Typography variant={"caption"} fontWeight={"medium"} color={"primary"} sx={{ textAlign: "center", opacity: 0.8}}>*/}
-      {/*    Website and server incurs costs, and your contribution helps keep it running.<br/>*/}
-      {/*    You can support this project financially by clicking the button below.*/}
-      {/*  </Typography>*/}
-      {/*  <Button disabled={true} onClick={() => {}} variant={"contained"} color={"primary"}>SUPPORT THIS PROJECT</Button>*/}
-      {/*</Styled.SupportContainer>*/}
     </Styled.ProjectInfoContainer>
   )
 }
