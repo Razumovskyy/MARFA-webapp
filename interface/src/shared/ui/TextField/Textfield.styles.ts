@@ -60,7 +60,7 @@ export const getStyles = (
       border: "none"
     },
     "& .MuiOutlinedInput-input": {
-      color: "#000",
+      color: "#000!important",
     },
   },
   "&.MuiInputBase-sizeLarge_x": {

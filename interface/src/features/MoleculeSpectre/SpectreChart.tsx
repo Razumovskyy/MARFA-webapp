@@ -16,9 +16,9 @@ import { fetchChart } from "@/entities/MoleculeSpectre/api/moleculeSpectre.api"
 
 export const SpectreChart = ({}) => {
   const theme = useTheme()
-  const { screenState, setScreenState, setZipUrl, setId, id } = useMolecularSpectreData()
+  const { id, spectreInterval } = useMolecularSpectreData()
   const methods = useForm<chartSpectreFormData>({
-    defaultValues: initialFormValues,
+    defaultValues: { v1: spectreInterval.start, v2: spectreInterval.finish },
     resolver: yupResolver(chartSpectreValidationSchema),
   })
   const {
@@ -87,8 +87,8 @@ export const SpectreChart = ({}) => {
                           )}
               /> </Styled.ChartParamContainer>
             <Styled.FetchChartContainer>
-              <Button disabled={isLoading} variant={"contained"} color={"primary"} onClick={handleSubmit(onSubmit)}>Get
-                chart</Button>
+              <Button disabled={isLoading} variant={"outlined"} color={"primary"} onClick={handleSubmit(onSubmit)}>Generate
+                Plot</Button>
               {isLoading && <CircularProgress size={theme.spacing(6)} />}
             </Styled.FetchChartContainer>
           </Styled.ChartFormContainer>

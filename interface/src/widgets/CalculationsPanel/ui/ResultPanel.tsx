@@ -8,7 +8,7 @@ import Link from "next/link"
 import { SpectreChart } from "@/features/MoleculeSpectre/SpectreChart"
 
 export const ResultPanel = () => {
-  const { screenState, setScreenState, zipUrl, id, setZipUrl } = useMolecularSpectreData()
+  const { screenState, setScreenState, zipUrl } = useMolecularSpectreData()
 
   const handleClickBack = () => {
     setScreenState(0)
@@ -24,17 +24,16 @@ export const ResultPanel = () => {
         <Styled.ResultPanelMainDiv>
           <Button sx={{ alignSelf: "flex-start" }} onClick={handleClickBack} variant={"outlined"}
                   color={"primary"}>Back</Button>
+          <Typography variant={"h2"}>Parameters</Typography>
           <SuccessMessage />
-          <SpectreChart />
+          <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Download Results</Typography>
           <Styled.DownloadDataContainer>
-            <Button variant={"contained"} color={"primary"} onClick={downloadData}>DOWNLOAD ALL PT-tables</Button>
+            <Button variant={"contained"} color={"primary"} onClick={downloadData}>Download </Button>
             <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontStyle: "italic" }}>See the <Link
-              href={"/format"}>data format</Link></Typography>
+              href={"/format"} target={"_blank"}>data format</Link></Typography>
           </Styled.DownloadDataContainer>
-          {/*<Typography sx={{ fontStyle: "italic", color: "#1E4E79", alignSelf: "center" }} variant={"caption"}*/}
-          {/*            fontWeight={"large"}>*/}
-          {/*  *With a large number of levels, file loading may take several minutes.*/}
-          {/*</Typography>*/}
+          <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Visualization Options</Typography>
+          <SpectreChart />
         </Styled.ResultPanelMainDiv>
       }
     </>

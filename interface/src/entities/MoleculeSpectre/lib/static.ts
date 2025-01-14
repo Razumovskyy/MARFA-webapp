@@ -16,35 +16,35 @@ export const moleculeOptions: { label: string, value: string }[] = [
 ]
 
 export const targetValues = [
-  { label: "absorption cross-section [cm^2]", value: "ACS" },
-  { label: "volume absorption coefficient [km^-1]", value: "VAC" },
+  { label: "absorption cross-section [cm^2]", value: "ACS"},
+  { label: "volume absorption coefficient [km^-1]", value: "VAC"}
 ]
 
 export const spectralLinesDatabases = [
-  { label: "HITRAN-2020", value: "HITRAN2020" },
+  { label: "HITRAN-2020", value: "HITRAN2020"},
 ]
 
 export const atmospheres = [
-  { label: "Venus CO2", value: "VenusCO2.dat" },
-  { label: "Venus H2O", value: "VenusH2O.dat" },
-  { label: "VenusCO2 60km", value: "VenusCO2_60km.dat" },
+  { label: "Venus CO2", value: "VenusCO2.dat"},
+  { label: "Venus H2O", value: "VenusH2O.dat"},
+  { label: "VenusCO2 60km", value: "VenusCO2_60km.dat"}
 ]
 
 export const initialFormValues: moleculeSpectreFormData | any | undefined = {
   species: null,
   first_spectral_interval: null,
   second_spectral_interval: null,
-  spectral_line: { label: "HITRAN-2020", value: "HITRAN2020" },
+  spectral_line: { label: "HITRAN-2020", value: "HITRAN2020"},
   line_cut_off_condition: null,
   target_value: null,
   atmosphere: null,
   temperature: null,
   pressure: null,
-  density: null,
+  density: null
 }
 
 export const resolutionsChart = [
-  { label: "coarse", value: "coarse" },
-  { label: "medium", value: "medium" },
-  { label: "high", value: "high" },
+  { label: "coarse", value: "coarse"},
+  { label: "medium", value: "medium"},
+  { label: "high", value: "high"}
 ]

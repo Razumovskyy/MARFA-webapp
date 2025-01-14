@@ -1,4 +1,4 @@
-export function formDataToRequestMapper<T, P>(data: T, isFile: boolean): P {
+export function formDataToRequestMapper<T, P>(data: T): P {
   return {
     line_cut_off: data.line_cut_off_condition,
     species: data.species?.value,
@@ -8,6 +8,6 @@ export function formDataToRequestMapper<T, P>(data: T, isFile: boolean): P {
     target_value: data.target_value?.value,
     temperature: data.temperature,
     pressure: data.pressure,
-    density: data.density
+    density: data.target_value.value === "VAC" ? data.density : "1"
   } as P
 }

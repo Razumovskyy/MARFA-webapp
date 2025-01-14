@@ -18,7 +18,13 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
   target_value: yup.object().required("Enter a value."),
   temperature: yup.number().required("Enter a value"),
   pressure: yup.number().required("Enter a value"),
-  density: yup.number().required("Enter a value"),
+  density: yup
+    .number()
+    .when("spectral_line", {
+      is: (value) => value === "VAC",
+      then: (schema) => schema.required("Enter a number"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
 })
 
 export const chartSpectreValidationSchema = yup.object().shape({

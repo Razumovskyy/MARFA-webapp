@@ -56,8 +56,8 @@ def calculate_absorption_spectre(spectre: Spectre) -> Tuple[str, str]:
         f'{spectre.line_cut_off}',
         f'{spectre.pressure}',
         f'{spectre.temperature}',
-        f'{spectre.density}',
         f'{spectre.target_value}',
+        f'{spectre.density}',
         f'{spectre.pk}',
     ]
     directory = Path(BASE_DIR) / 'core'
