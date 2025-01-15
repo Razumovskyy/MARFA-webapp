@@ -52,12 +52,15 @@ export const getStyles = (
   "& .Mui-disabled": {
     color: `${themes.palette.additional.gray}!important`,
     "& fieldset": {
-      backgroundColor: themes.palette.text.disabled,
+      //backgroundColor: themes.palette.text.disabled,
       height: height && `${height}px`,
-      border: "none",
+      color: "#000"
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      border: "none",
+      border: "none"
+    },
+    "& .MuiOutlinedInput-input": {
+      color: "#000!important",
     },
   },
   "&.MuiInputBase-sizeLarge_x": {

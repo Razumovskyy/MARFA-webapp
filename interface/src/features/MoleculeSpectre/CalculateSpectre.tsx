@@ -15,8 +15,8 @@ import { useMolecularSpectreData } from "@/entities/MoleculeSpectre/models/Molec
 export const CalculateSpectre = () => {
 
   const theme = useTheme()
-  const { screenState, setScreenState, setZipUrl, setId } = useMolecularSpectreData()
-  const [isFile, setIsFile] = useState(false)
+  const { screenState, setScreenState, setZipUrl, setId, setSpectreInterval } = useMolecularSpectreData()
+  const [visibleDensity, setVisibleDensity] = useState(true)
 
   const methods = useForm<moleculeSpectreFormData>({
     defaultValues: initialFormValues,
@@ -35,8 +35,9 @@ export const CalculateSpectre = () => {
 
   const onSubmit = (data: moleculeSpectreFormData) => {
     setIsLoading(true)
-    getSpectre(formDataToRequestMapper<moleculeSpectreFormData, calculateSpectreParamsType>(data, isFile)).then(res => {
+    getSpectre(formDataToRequestMapper<moleculeSpectreFormData, calculateSpectreParamsType>(data)).then(res => {
       setIsLoading(false)
+      setSpectreInterval({ start: data.first_spectral_interval, finish: data.second_spectral_interval })
       setId(res.data.id)
       setZipUrl(res.data.download_link)
       setScreenState(1)
@@ -63,7 +64,7 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 size={"medium"}
                 options={moleculeOptions}
-                label={"Choose species"}
+                label={"Select species ..."}
                 onChange={(event, value) => {
                   setShowCO2Fields(!!value && value["label"] === "CO2")
                   field.onChange(value)
@@ -77,7 +78,7 @@ export const CalculateSpectre = () => {
           />
           <Styled.SpectreIntervalContainer>
             <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontSize: "14px" }}>Spectral interval
-              (cm-1):</Typography>
+              (e.g., 500–1500 cm⁻¹):</Typography>
             <Styled.FieldsContainer>
               <Controller
                 name="first_spectral_interval"
@@ -113,21 +114,6 @@ export const CalculateSpectre = () => {
             </Styled.FieldsContainer>
           </Styled.SpectreIntervalContainer>
           <Controller
-            name="spectral_line"
-            control={control as Control<FieldValues>}
-            render={({ field }) => (
-              <Autocomplete
-                options={spectralLinesDatabases}
-                label={"Choose Spectral Line Database"}
-                onChange={(event, value) => field.onChange(value)}
-                value={field.value}
-                style={{ width: theme.spacing(76) }}
-                error={!!errors.spectral_line}
-                errorMessage={errors.spectral_line?.message}
-              />
-            )}
-          />
-          <Controller
             name="line_cut_off_condition"
             control={control as Control<FieldValues>}
             render={({ field }) => (
@@ -135,27 +121,10 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Set line cut-off condition (0-500 cm^-1)"}
+                label={"Line cut-off condition (e.g. 125 cm⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.line_cut_off_condition}
                 helperText={errors.line_cut_off_condition?.message}
-              />
-            )}
-          />
-          <Controller
-            name="target_value"
-            control={control as Control<FieldValues>}
-            render={({ field }) => (
-              <Autocomplete
-                options={targetValues}
-                label={"Choose target value"}
-                onChange={(event, value) =>
-                  field.onChange(value)
-                }
-                value={field.value}
-                style={{ width: theme.spacing(76) }}
-                error={!!errors.target_value}
-                errorMessage={errors.target_value?.message}
               />
             )}
           />
@@ -167,7 +136,7 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Temperature"}
+                label={"Temperature (e.g. 300 K)"}
                 variant={"outlined"}
                 error={!!errors.temperature}
                 helperText={errors.temperature?.message}
@@ -182,10 +151,28 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(76) }}
-                label={"Pressure"}
+                label={"Pressure (e.g. 1 atm)"}
                 variant={"outlined"}
                 error={!!errors.pressure}
                 helperText={errors.pressure?.message}
+              />
+            )}
+          />
+          <Controller
+            name="target_value"
+            control={control as Control<FieldValues>}
+            render={({ field }) => (
+              <Autocomplete
+                options={targetValues}
+                label={"Select target value"}
+                onChange={(event, value) => {
+                  field.onChange(value);
+                  setVisibleDensity(!!value && value["value"] === "ACS")
+                }}
+                value={field.value}
+                style={{ width: theme.spacing(76) }}
+                error={!!errors.target_value}
+                errorMessage={errors.target_value?.message}
               />
             )}
           />
@@ -196,11 +183,28 @@ export const CalculateSpectre = () => {
               <TextField
                 value={field.value}
                 {...field}
+                disabled={visibleDensity}
                 style={{ width: theme.spacing(76) }}
-                label={"Density"}
+                label={"Number Density (e.g. 1E25 cm⁻²·km⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.density}
                 helperText={errors.density?.message}
+              />
+            )}
+          />
+          <Controller
+            name="spectral_line"
+            control={control as Control<FieldValues>}
+            render={({ field }) => (
+              <Autocomplete
+                disabled={true}
+                options={spectralLinesDatabases}
+                label={"Select spectral database ..."}
+                onChange={(event, value) => field.onChange(value)}
+                value={field.value["label"]}
+                style={{ width: theme.spacing(76) }}
+                error={!!errors.spectral_line}
+                errorMessage={errors.spectral_line?.message}
               />
             )}
           />

@@ -66,3 +66,16 @@ class SpectreSerializer(serializers.ModelSerializer):
             "target_value",
             "download_link",
         ]
+
+
+class PlotSpectreSerializer(serializers.Serializer):
+    pk = serializers.PrimaryKeyRelatedField(queryset=Spectre.objects.all(), required=True)
+    v1 = serializers.FloatField(write_only=True, required=True)
+    v2 = serializers.FloatField(write_only=True, required=True)
+
+    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
+        spectre = attrs["pk"]
+        if not spectre.v_start <= attrs.get('v1') < attrs.get('v2') <= spectre.v_end:
+            raise serializers.ValidationError({'Invalid v1 and v2'})
+        attrs["spectre"] = spectre
+        return attrs

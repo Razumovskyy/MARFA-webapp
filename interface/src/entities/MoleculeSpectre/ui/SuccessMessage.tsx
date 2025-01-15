@@ -6,8 +6,8 @@ export const SuccessMessage = () => {
 
   return (
     <Styled.SuccessMessageContainer>
-      <Typography sx={{ color: theme.palette.success.main}}>The data has been calculated!</Typography>
-      <Typography>Here you can plot, check and download your results.</Typography>
+      <Typography sx={{ color: theme.palette.success.main}}>Absorption spectra has been calculated ! </Typography>
+      <Typography>Here you can download an archive with resulting data and generate plots.</Typography>
     </Styled.SuccessMessageContainer>
   )
 }

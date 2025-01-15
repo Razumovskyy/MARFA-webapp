@@ -4,11 +4,13 @@ import { TextField } from "@/shared/ui"
 import { AutocompleteEvent, IAutocomplete, OptionType } from "./Autocomplete.types"
 import { IStyle, Size } from "../styles.const"
 
-const getStyles = (width?: string | number, style?: IStyle) => ({
+const getStyles = (width?: string | number, disabled?: boolean, style?: IStyle) => ({
   minWidth: width,
   width: "100%",
   ".MuiSvgIcon-fontSizeMedium": {
+    display: disabled ? "none" : "visible",
     scale: "1.5",
+    marginTop: "5px",
   },
   ...style,
 })
@@ -71,7 +73,7 @@ export const Autocomplete = ({
             value={value}
             label={label}
             size={size}
-            style={getStyles(width, style)}
+            style={getStyles(width, disabled, style)}
             disabled={disabled}
           />
         )

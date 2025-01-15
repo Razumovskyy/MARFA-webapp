@@ -10,8 +10,12 @@ import subprocess
 from pathlib import Path
 from typing import Tuple
 
+import numpy as np
 from marfa_app.settings import SPECTRES_ROOT, BASE_DIR, MEDIA_ROOT, INFO_FILENAME, PT_FILENAME
 from spectres.models import Spectre
+import matplotlib.pyplot as plt
+import matplotlib
+import io
 
 
 def create_spectre_directory(identifier: int) -> Path:
@@ -52,8 +56,8 @@ def calculate_absorption_spectre(spectre: Spectre) -> Tuple[str, str]:
         f'{spectre.line_cut_off}',
         f'{spectre.pressure}',
         f'{spectre.temperature}',
-        f'{spectre.density}',
         f'{spectre.target_value}',
+        f'{spectre.density}',
         f'{spectre.pk}',
     ]
     directory = Path(BASE_DIR) / 'core'
@@ -132,3 +136,40 @@ def generate_zip_archive(directory: Path) -> Path:
         base_dir=str(directory.name),
     )
     return Path(archive_name)
+
+
+def generate_plot(x_data, y_data, y_title):
+    """
+    Генерирует график с использованием matplotlib и возвращает его в формате SVG.
+
+    :param x_data: Данные по оси X
+    :param y_data: Данные по оси Y
+    :return: Строка с содержимым SVG
+    """
+    matplotlib.use("agg")
+    plt.figure(figsize=(12, 6))
+    fig, ax = plt.subplots()
+    y_title = (
+        f'Absorption Cross-Section [cm$^{{2}}$ mol$^{{-1}}$]'
+        if y_title == 'ACS'
+        else f'Volume Absorption Coefficient [km$^{{-1}}$]'
+    )
+    y_data = np.log10(y_data)
+
+    ax.plot(x_data, y_data, color='g', linestyle='-')
+
+    ax.set_xlabel(r'Wavenumber [$\mathregular{cm^{-1}}$]')
+    ax.set_ylabel(y_title)
+    ax.grid(which='major', axis='both', color='gray', alpha=0.5)
+
+    ax.minorticks_on()
+    ax.tick_params(axis='y', which='both', right=True)
+
+    svg_buffer = io.StringIO()
+    plt.savefig(svg_buffer, format='svg', bbox_inches='tight')
+    plt.close(fig)
+
+    svg_content = svg_buffer.getvalue()
+    svg_buffer.close()
+
+    return svg_content
