@@ -10,5 +10,6 @@ FROM node:20-slim
 WORKDIR /myapp
 COPY --from=frontend-builder /myapp/.next /myapp/.next
 COPY --from=frontend-builder /myapp/package.json /myapp/package.json
+COPY --from=frontend-builder /myapp/node_modules /myapp/node_modules
 EXPOSE 3001
 CMD ["npm", "run", "start", "--", "-p", "3001"]
