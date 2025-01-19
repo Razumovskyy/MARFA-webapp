@@ -1,36 +1,31 @@
-name: Marfa Frontend Deployment
+name: Deploy MARFA-webapp Frontend
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_and_push:
+
+    name: Push frontend image to Selectel Container Registry
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js environment
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run build
-        env:
-          CI: false
-          NODE_OPTIONS: "--max_old_space_size=8192"
-      - name: Creating SSH key and establishing SSH tunnel
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "$(ssh-keyscan -p ${PORT} ${IP})" >> ~/.ssh/known_hosts
-          sleep 5
-          ssh -p ${PORT} ${USER}@${IP} "rm -rf /var/www/marfa-spectra.com/html/*"
-          scp -P ${PORT} -r ./out/* ${USER}@${IP}:/var/www/marfa-spectra.com/html/
-        shell: bash
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          USER: ${{ secrets.USER }}
-          IP: ${{ secrets.IP }}
-          PORT: ${{ secrets.PORT }}
+      - name: Checkout the repo
+        uses: actions/checkout@v3
 
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Selectel
+        uses: docker/login-action@v3
+        with:
+          registry: cr.selcloud.ru
+          username: token
+          password: ${{ secrets.CONTAINER_REGISTRY_PASSWORD }}
+
+      - name: Push to container registry
+        uses: docker/build-push-action@v4
+        with:
+          context: ./interface
+          push: true
+          tags: cr.selcloud.ru/marfa/marfa-frontend:latest
