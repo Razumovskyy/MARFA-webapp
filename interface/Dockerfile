@@ -14,5 +14,5 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /main .
 FROM gcr.io/distroless/static-debian12
 COPY --from=frontend-builder /myapp/.next /build
 COPY --from=static-router main .
-EXPOSE 3000
+EXPOSE 3001
 CMD ["./main"]

@@ -13,5 +13,5 @@ func main() {
         c.File("./build/index.html")
     })
 
-    r.Run(":3000")
+    r.Run(":3001")
 }
