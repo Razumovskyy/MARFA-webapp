@@ -48,8 +48,8 @@ contains
             ! write (*,*) 'refLineIntensity: ', refLineIntensity
             
             if (ios2 > 0) then
-                write (0, *) 'FileReadingError: when reading file with spectral data. File with spectral data may have &
-                                inconsistent structure or there are no specrtral lines in the requested spectral interval.'
+                write (0, *) 'FileReadingError: when reading file with spectral data. File with spectral data may have inconsistent structure &
+                                or there are no specrtral lines in the requested spectral interval.'
                 stop 93
             end if
 
