@@ -29,3 +29,16 @@ jobs:
           context: ./interface
           push: true
           tags: cr.selcloud.ru/marfa/marfa-frontend:latest
+
+      - name: Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.TEST_SERVER_IP }}
+          username: ${{ secrets.TEST_USERNAME }}
+          key: ${{ secrets.TEST_SERVER_SSH_KEY }}
+          port: ${{ secrets.TEST_SERVER_PORT }}
+          script: |
+            cd ../marfa
+            docker pull cr.selcloud.ru/marfa/marfa-frontend:latest
+            docker compose down
+            docker compose up --build -d
