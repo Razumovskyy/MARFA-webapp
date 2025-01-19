@@ -38,7 +38,7 @@ jobs:
           key: ${{ secrets.TEST_SERVER_SSH_KEY }}
           port: ${{ secrets.TEST_SERVER_PORT }}
           script: |
-            cd ../marfa
+            cd ./marfa
             docker pull cr.selcloud.ru/marfa/marfa-frontend:latest
             docker compose down
             docker compose up --build -d
