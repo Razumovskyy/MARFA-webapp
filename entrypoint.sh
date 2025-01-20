@@ -8,7 +8,7 @@ fpm build
 cd ../api-server
 
 # Run Django migrations
-# python manage.py migrate --noinput
+python manage.py migrate --noinput
 
 # Start Django server in the background
 exec gunicorn marfa_app.wsgi:application \
