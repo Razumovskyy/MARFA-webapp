@@ -12,7 +12,7 @@ cd ../api-server
 
 # Start Django server in the background
 exec gunicorn marfa_app.wsgi:application \
-    --bind 0.0.0.0:8000 \
+    --bind 0.0.0.0:8001 \
     --workers 2 \
     --threads 2 \
     --timeout 420 \
