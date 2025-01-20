@@ -15,6 +15,8 @@ DJANGO_ENV = env('DJANGO_ENV', default='development')
 
 SECRET_KEY = env('SECRET_KEY')
 
+MEDIA_ROOT = Path(BASE_DIR) / 'media'
+
 if DJANGO_ENV == 'development':
     DEBUG = True
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -32,6 +34,7 @@ else:  # production
     ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
     CURRENT_HOST = env.str('CURRENT_HOST')
     MEDIA_URL = env.str('MEDIA_URL')
+    MEDIA_ROOT = env.str('MEDIA_ROOT')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -43,8 +46,35 @@ else:  # production
             'PASSWORD': env.str('DB_PASSWORD'),
         }
     }
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {message}',
+                'style': '{',
+            },
+        },
+        'handlers': {
+            'console': {
+                'level': 'INFO',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose',
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+        },
+    }
 
-MEDIA_ROOT = Path(BASE_DIR) / 'media'
 SPECTRES_ROOT = Path(MEDIA_ROOT) / 'users'
 
 INSTALLED_APPS = [
