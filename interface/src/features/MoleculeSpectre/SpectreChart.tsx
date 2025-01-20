@@ -16,9 +16,9 @@ import { fetchChart } from "@/entities/MoleculeSpectre/api/moleculeSpectre.api"
 
 export const SpectreChart = ({}) => {
   const theme = useTheme()
-  const { id, spectreInterval } = useMolecularSpectreData()
+  const { id, spectreData } = useMolecularSpectreData()
   const methods = useForm<chartSpectreFormData>({
-    defaultValues: { v1: spectreInterval.start, v2: spectreInterval.finish },
+    defaultValues: { v1: spectreData.first_spectral_interval, v2: spectreData.second_spectral_interval },
     resolver: yupResolver(chartSpectreValidationSchema),
   })
   const {

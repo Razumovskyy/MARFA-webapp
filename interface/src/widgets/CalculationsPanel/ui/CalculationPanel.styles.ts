@@ -35,3 +35,10 @@ export const DownloadDataContainer = styled("div")(({ theme }) => ({
   justifyContent: "center",
   gap: theme.spacing(1),
 }))
+
+export const SpectreFormParamsContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(1),
+  alignSelf: "flex-start"
+}))
