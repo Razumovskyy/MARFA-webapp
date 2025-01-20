@@ -35,7 +35,6 @@ else:  # production
     CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
     CURRENT_HOST = env.str('CURRENT_HOST')
     MEDIA_URL = env.str('MEDIA_URL')
-    MEDIA_ROOT = env.str('MEDIA_ROOT')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
