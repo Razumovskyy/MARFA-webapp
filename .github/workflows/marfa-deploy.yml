@@ -48,4 +48,4 @@ jobs:
             docker pull cr.selcloud.ru/marfa/marfa-frontend:latest
             docker pull cr.selcloud.ru/marfa/marfa-core:latest
             docker compose down
-            docker compose up --build -d 
+            docker compose up --build -d
