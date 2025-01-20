@@ -5,14 +5,14 @@ set -e
 cd core
 fpm build
 
-cd ..
+cd ../api-server
 
 # Run Django migrations
-python api-server/manage.py migrate --noinput
+python manage.py migrate --noinput
 
 # Start Django server in the background
-exec gunicorn api-server.wsgi:application \
-    --bind 0.0.0.0:8000 \
+exec gunicorn marfa_app.wsgi:application \
+    --bind 0.0.0.0:8001 \
     --workers 2 \
     --threads 2 \
     --timeout 420 \
