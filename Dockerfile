@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gfortran \
     wget \
     tar \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 ENV FPM_VERSION=0.9.0
