@@ -1,7 +1,9 @@
 name: Deploy MARFA-webapp
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   production-deploy:
@@ -21,27 +23,25 @@ jobs:
               - 'api-server/**'
             interface:
               - 'interface/**'
-            core_dockerfile:
-              - 'docker/prod/core.Dockerfile
-            interface_dockerfile:
-              - 'docker/prod/interface.Dockerfile
+
+      - name: debug
+        run: |
+          echo ${{ steps.filter.outputs.interface }}
+          echo ${{ steps.filter.outputs.api-server }}
+          echo ${{ steps.filter.outputs.core }}
 
       - name: Setup Docker Buildx
         if: | 
           steps.filter.outputs.core == 'true' || 
           steps.filter.outputs.api-server == 'true'||
-          steps.filter.outputs.interface == 'true' ||
-          steps.filter.outputs.core_dockerfile == 'true' ||
-          steps.filter.outputs.interface_dockerfile == 'true'
+          steps.filter.outputs.interface == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Selectel
         if: |
           steps.filter.outputs.core == 'true' || 
           steps.filter.outputs.api-server == 'true'||
-          steps.filter.outputs.interface == 'true' ||
-          steps.filter.outputs.core_dockerfile == 'true' ||
-          steps.filter.outputs.interface_dockerfile == 'true'
+          steps.filter.outputs.interface == 'true'
         uses: docker/login-action@v3
         with:
           registry: cr.selcloud.ru
@@ -50,7 +50,7 @@ jobs:
 
       - name: Push frontend to container registry
         id: push_frontend
-        if: steps.filter.outputs.interface == 'true' || steps.filter.outputs.interface__dockerfile == 'true'
+        if: steps.filter.outputs.interface == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./interface
@@ -60,10 +60,7 @@ jobs:
 
       - name: Push core to container registry
         id: push_core
-        if: |
-          steps.filter.outputs.interface == 'true' || 
-          steps.filter.outputs.core == 'true' || 
-          steps.filter.outputs.core_dockerfile == 'true'
+        if: steps.filter.outputs.core == 'true'
         uses: docker/build-push-action@v4
         with:
           context: .

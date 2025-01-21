@@ -16,7 +16,7 @@ RUN wget https://github.com/fortran-lang/fpm/releases/download/v${FPM_VERSION}/f
 WORKDIR /app
 
 FROM base AS builder
-COPY requirements.txt ./
+COPY ./api-server/requirements.txt ./
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 FROM base AS production

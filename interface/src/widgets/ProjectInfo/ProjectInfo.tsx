@@ -15,7 +15,7 @@ export const ProjectInfo = () => {
   return (
     <Styled.ProjectInfoContainer>
       <Button onClick={goToCalculation} color={"primary"} variant={"contained"}>Go to calculation</Button>
-      <Typography color={"primary"} variant={"h3"} sx={{ opacity: 0.8 }}>Molecular atmospheric Absorption with Rapid and Flexible Analysis
+      <Typography color={"primary"} variant={"h3"} sx={{ opacity: 0.8 }}>Molecular Atmospheric Absorption with Rapid and Flexible Analysis
         (MARFA)</Typography>
         <Typography variant="body1" fontSize="medium" fontWeight="medium">
             This web application features a lightweight version of the <b>MARFA</b> code. MARFA is a Fortran-based tool
