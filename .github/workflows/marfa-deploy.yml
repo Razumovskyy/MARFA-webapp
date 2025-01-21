@@ -50,7 +50,7 @@ jobs:
 
       - name: Push frontend to container registry
         id: push_frontend
-        if: steps.filter.outputs.interface == 'true' || steps.filter.outputs.interface__dockerfile == 'true'
+        if: steps.filter.outputs.interface == 'true' || steps.filter.outputs.interface_dockerfile == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./interface
@@ -61,7 +61,6 @@ jobs:
       - name: Push core to container registry
         id: push_core
         if: |
-          steps.filter.outputs.interface == 'true' || 
           steps.filter.outputs.core == 'true' || 
           steps.filter.outputs.core_dockerfile == 'true'
         uses: docker/build-push-action@v4
