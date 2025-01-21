@@ -6,9 +6,8 @@ on:
       - main
 
 jobs:
-  build_and_push:
+  production-deploy:
 
-    name: Deploy Job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
