@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react"
 import { useStateType } from "@/shared/util/useStateType"
 import { moleculeSpectreFormData } from "@/entities/MoleculeSpectre"
+import { requestFormData } from "@/entities/MoleculeSpectre/models/types"
 
 interface MoleculeSpectreContextType {
   screenState: number;
@@ -22,7 +23,7 @@ export function MoleculeSpectreContextProvider({ children }: MoleculeSpectreCont
   const [screenState, setScreenState] = useState<number>(0)
   const [zipUrl, setZipUrl] = useState<string | null>(null)
   const [id, setId] = useState<number | null>(null)
-  const [spectreData, setSpectreData] = useState<moleculeSpectreFormData | null>(null)
+  const [spectreData, setSpectreData] = useState<requestFormData | null>(null)
 
   return (
     <MoleculeSpectreContext.Provider

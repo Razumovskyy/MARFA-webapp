@@ -3,12 +3,12 @@ import { useMolecularSpectreData } from "@/entities/MoleculeSpectre/models/Molec
 import * as Styled from "./CalculationPanel.styles"
 import { Typography } from "@mui/material"
 import { Button } from "@/shared/ui"
-import { SuccessMessage } from "@/entities/MoleculeSpectre"
+import { ResultParams, SuccessMessage } from "@/entities/MoleculeSpectre"
 import Link from "next/link"
 import { SpectreChart } from "@/features/MoleculeSpectre/SpectreChart"
 
 export const ResultPanel = () => {
-  const { screenState, setScreenState, zipUrl, spectreData } = useMolecularSpectreData()
+  const { screenState, setScreenState, zipUrl } = useMolecularSpectreData()
 
   const handleClickBack = () => {
     setScreenState(0)
@@ -26,9 +26,7 @@ export const ResultPanel = () => {
                   color={"primary"}>Back</Button>
           <Styled.SpectreFormParamsContainer>
             <Typography variant={"h2"}>Parameters</Typography>
-            {Object.entries(spectreData).filter(e => !!e[1]).map(e =>
-              <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}><b>{`${e[0]}: `}</b>{!!e[1]?.label ? e[1]?.label : e[1]}</Typography>,
-            )}
+            <ResultParams />
           </Styled.SpectreFormParamsContainer>
           <SuccessMessage />
           <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Download Results</Typography>

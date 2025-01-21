@@ -2,8 +2,9 @@
 // @ts-nocheck
 import React from "react";
 import * as Styled from "./ui/ProjectInfo.styles";
-import { Button, Grid, Card, CardContent } from "@mui/material";
+import { Grid, Card, CardContent } from "@mui/material";
 import { Typography } from "@mui/material";
+import { Button } from "@/shared/ui"
 
 export const ProjectInfo = () => {
 
@@ -14,7 +15,6 @@ export const ProjectInfo = () => {
   return (
     <Styled.ProjectInfoContainer
       sx={{
-        backgroundColor: "#f9f9f9",
         minHeight: "100vh",
         padding: "2rem",
         display: "flex",
@@ -40,7 +40,7 @@ export const ProjectInfo = () => {
             color="primary"
             variant="contained"
             size="large"
-            sx={{ width: "100%", padding: "1rem", fontSize: "1rem" }}
+            sx={{ width: "100%" }}
           >
             Go to calculation
           </Button>
@@ -118,11 +118,11 @@ export const ProjectInfo = () => {
                   <li>
                     <b>Denis Astanin</b>, web developer at BiTronics Lab:{" "}
                     <a
-                      href="https://github.com/BitronicsDev"
+                      href="https://github.com/DisaAst"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      https://github.com/BitronicsDev
+                      https://github.com/DisaAst
                     </a>
                   </li>
                 </ul>

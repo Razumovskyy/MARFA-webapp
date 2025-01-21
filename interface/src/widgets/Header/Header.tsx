@@ -21,7 +21,7 @@ export const Header = () => {
           </Link>
           <Styled.VerticalLine>|</Styled.VerticalLine>
           <Link href={"/about"}>
-            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}><i>About project</i></Typography>
+            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}><i>About</i></Typography>
           </Link>
         </Styled.FeaturesContainer>
       </Styled.StyledToolbar>

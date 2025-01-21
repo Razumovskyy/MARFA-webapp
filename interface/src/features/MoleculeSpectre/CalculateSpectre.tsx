@@ -35,9 +35,13 @@ export const CalculateSpectre = () => {
 
   const onSubmit = (data: moleculeSpectreFormData) => {
     setIsLoading(true)
-    getSpectre(formDataToRequestMapper<moleculeSpectreFormData, calculateSpectreParamsType>(data)).then(res => {
+    let request_data = formDataToRequestMapper(data)
+    getSpectre(request_data).then(res => {
       setIsLoading(false)
-      setSpectreData({ ...data })
+      setSpectreData({
+        ...request_data,
+        target_value: request_data.target_value === "VAC" ? "Volume absorption coefficient [km^-1]" : "Absorption cross-section [cm^2]",
+      })
       setId(res.data.id)
       setZipUrl(res.data.download_link)
       setScreenState(1)
@@ -182,7 +186,7 @@ export const CalculateSpectre = () => {
                 options={targetValues}
                 label={"Select target value"}
                 onChange={(event, value) => {
-                  field.onChange(value);
+                  field.onChange(value)
                   setVisibleDensity(!!value && value["value"] === "ACS")
                 }}
                 value={field.value}

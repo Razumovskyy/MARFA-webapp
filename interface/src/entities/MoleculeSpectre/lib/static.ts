@@ -48,3 +48,15 @@ export const resolutionsChart = [
   { label: "medium", value: "medium"},
   { label: "high", value: "high"}
 ]
+
+export const resultParams = [
+  { label: "Spectral line database", value: "database_slug", id: 1, units: ""},
+  { label: "Species", value: "species", id: 6, units: ""},
+  { label: "First spectral interval", value: "v_start", id: 2, units: "cm⁻¹"},
+  { label: "Second spectral interval", value: "v_end", id: 3, units: "cm⁻¹"},
+  { label: "Line cut off condition", value: "line_cut_off", id: 4, units: "cm⁻¹"},
+  { label: "Target value", value: "target_value", id: 5, units: ""},
+  { label: "Pressure", value: "pressure", id: 7, units: "atm"},
+  { label: "Temperature", value: "temperature", id: 8, units: "K"},
+  { label: "Density", value: "density", id: 9, units: "cm⁻²·km⁻¹"},
+]

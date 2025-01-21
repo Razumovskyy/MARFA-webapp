@@ -18,7 +18,7 @@ export const SpectreChart = ({}) => {
   const theme = useTheme()
   const { id, spectreData } = useMolecularSpectreData()
   const methods = useForm<chartSpectreFormData>({
-    defaultValues: { v1: spectreData.first_spectral_interval, v2: spectreData.second_spectral_interval },
+    defaultValues: { v1: spectreData.v_start, v2: spectreData.v_end },
     resolver: yupResolver(chartSpectreValidationSchema),
   })
   const {
@@ -39,6 +39,7 @@ export const SpectreChart = ({}) => {
         if (err.response && err.response.data) {
           const apiErrors = err.response.data
           Object.keys(apiErrors).forEach(field => {
+            console.log(field)
             setError(field as keyof chartSpectreFormData, {
               type: "server",
               message: "",
