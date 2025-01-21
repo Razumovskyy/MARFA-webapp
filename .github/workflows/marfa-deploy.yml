@@ -26,6 +26,12 @@ jobs:
             interface_dockerfile:
               - 'docker/prod/interface.Dockerfile'
 
+      - name: debug
+        run: |
+          echo ${{ steps.filter.outputs.interface }}
+          echo ${{ steps.filter.outputs.api-server }}
+          echo ${{ steps.filter.outputs.core }}
+
       - name: Setup Docker Buildx
         if: | 
           steps.filter.outputs.core == 'true' || 
