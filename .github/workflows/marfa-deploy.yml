@@ -62,7 +62,10 @@ jobs:
 
       - name: Push core to container registry
         id: push_core
-        if: steps.filter.outputs.core == 'true' || steps.filter.outputs.core_dockerfile == 'true'
+        if: |
+          steps.filter.outputs.core == 'true' || 
+          steps.filter.outputs.api-server == 'true' || 
+          steps.filter.outputs.core_dockerfile == 'true'
         uses: docker/build-push-action@v4
         with:
           context: .
