@@ -1,12 +1,14 @@
 name: Deploy MARFA-webapp
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build_and_push:
 
-    name: Push frontend and core images to Selectel registry
+    name: Deploy Job
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
@@ -50,4 +52,4 @@ jobs:
             docker pull cr.selcloud.ru/marfa/marfa-frontend:latest
             docker pull cr.selcloud.ru/marfa/marfa-core:latest
             docker compose down
-            docker compose up --build -d
+            docker compose up -d
