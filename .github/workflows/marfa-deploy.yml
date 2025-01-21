@@ -26,6 +26,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./interface
+          file: ./docker/prod/interface.Dockerfile
           push: true
           tags: cr.selcloud.ru/marfa/marfa-frontend:latest
 
@@ -33,6 +34,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./docker/prod/core.Dockerfile
           push: true
           tags: cr.selcloud.ru/marfa/marfa-core:latest
 
