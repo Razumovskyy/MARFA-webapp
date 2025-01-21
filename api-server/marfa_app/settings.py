@@ -35,6 +35,8 @@ else:  # production
     CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
     CURRENT_HOST = env.str('CURRENT_HOST')
     MEDIA_URL = env.str('MEDIA_URL')
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
