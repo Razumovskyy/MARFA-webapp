@@ -16,8 +16,8 @@ export const moleculeOptions: { label: string, value: string }[] = [
 ]
 
 export const targetValues = [
-  { label: "absorption cross-section [cm^2]", value: "ACS"},
-  { label: "volume absorption coefficient [km^-1]", value: "VAC"}
+  { label: "absorption cross-section", value: "ACS"},
+  { label: "volume absorption coefficient", value: "VAC"}
 ]
 
 export const spectralLinesDatabases = [
@@ -47,4 +47,16 @@ export const resolutionsChart = [
   { label: "coarse", value: "coarse"},
   { label: "medium", value: "medium"},
   { label: "high", value: "high"}
+]
+
+export const resultParams = [
+  { label: "Spectral line database", value: "database_slug", id: 1, units: ""},
+  { label: "Species", value: "species", id: 6, units: ""},
+  { label: "Start of spectral interval", value: "v_start", id: 2, units: "cm⁻¹"},
+  { label: "End of spectral interval", value: "v_end", id: 3, units: "cm⁻¹"},
+  { label: "Line cut off condition", value: "line_cut_off", id: 4, units: "cm⁻¹"},
+  { label: "Target value", value: "target_value", id: 5, units: 'cm<sup>2</sup>'},
+  { label: "Pressure", value: "pressure", id: 7, units: "atm"},
+  { label: "Temperature", value: "temperature", id: 8, units: "K"},
+  { label: "Density", value: "density", id: 9, units: "cm⁻²·km⁻¹"},
 ]

@@ -16,9 +16,9 @@ import { fetchChart } from "@/entities/MoleculeSpectre/api/moleculeSpectre.api"
 
 export const SpectreChart = ({}) => {
   const theme = useTheme()
-  const { id, spectreInterval } = useMolecularSpectreData()
+  const { id, spectreData } = useMolecularSpectreData()
   const methods = useForm<chartSpectreFormData>({
-    defaultValues: { v1: spectreInterval.start, v2: spectreInterval.finish },
+    defaultValues: { v1: spectreData.v_start, v2: spectreData.v_end },
     resolver: yupResolver(chartSpectreValidationSchema),
   })
   const {
@@ -39,6 +39,7 @@ export const SpectreChart = ({}) => {
         if (err.response && err.response.data) {
           const apiErrors = err.response.data
           Object.keys(apiErrors).forEach(field => {
+            console.log(field)
             setError(field as keyof chartSpectreFormData, {
               type: "server",
               message: "",
@@ -58,34 +59,37 @@ export const SpectreChart = ({}) => {
         <FormProvider {...methods}>
           <Styled.ChartFormContainer>
             <Styled.ChartParamContainer>
-              <Typography>Spectral interval</Typography>
-              <Controller name="v1"
-                          control={control as Control<FieldValues>}
-                          render={({ field }) => (
-                            <TextField value={field.value}
-                                       {...field}
-                                       style={{ width: "137px" }}
-                                       variant={"outlined"}
-                                       label={""}
-                                       error={!!errors.v1}
-                                       helperText={errors.v1?.message}
-                            />
-                          )}
-              />
-              <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>—</Typography>
-              <Controller name="v2"
-                          control={control as Control<FieldValues>}
-                          render={({ field }) => (
-                            <TextField value={field.value}
-                                       {...field}
-                                       style={{ width: "137px" }}
-                                       variant={"outlined"}
-                                       label={""}
-                                       error={!!errors.v2}
-                                       helperText={errors.v2?.message}
-                            />
-                          )}
-              /> </Styled.ChartParamContainer>
+              <Typography variant={"caption"} fontSize={"small"} fontWeight={"small"} sx={{ width: "100%" }}>Spectral
+                interval</Typography>
+              <Styled.ChartFieldsContainer>
+                <Controller name="v1"
+                            control={control as Control<FieldValues>}
+                            render={({ field }) => (
+                              <TextField value={field.value}
+                                         {...field}
+                                         style={{ width: theme.spacing(46) }}
+                                         variant={"outlined"}
+                                         label={""}
+                                         error={!!errors.v1}
+                                         helperText={errors.v1?.message}
+                              />
+                            )}
+                />
+                <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>—</Typography>
+                <Controller name="v2"
+                            control={control as Control<FieldValues>}
+                            render={({ field }) => (
+                              <TextField value={field.value}
+                                         {...field}
+                                         style={{ width: theme.spacing(46) }}
+                                         variant={"outlined"}
+                                         label={""}
+                                         error={!!errors.v2}
+                                         helperText={errors.v2?.message}
+                              />
+                            )}/>
+              </Styled.ChartFieldsContainer>
+            </Styled.ChartParamContainer>
             <Styled.FetchChartContainer>
               <Button disabled={isLoading} variant={"outlined"} color={"primary"} onClick={handleSubmit(onSubmit)}>Generate
                 Plot</Button>

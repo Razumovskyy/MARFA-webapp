@@ -11,6 +11,18 @@ export type moleculeSpectreFormData = {
   density: number
 }
 
+export type requestFormData = {
+  line_cut_off: number,
+  species: string,
+  v_start: number,
+  v_end: number,
+  database_slug: string,
+  target_value: string,
+  temperature: number,
+  pressure: number,
+  density: number | string
+}
+
 export type chartSpectreFormData = {
   v1: number,
   v2: number,

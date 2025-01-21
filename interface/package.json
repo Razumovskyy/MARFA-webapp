@@ -20,6 +20,7 @@
     "@mui/material-nextjs": "^5.16.6",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/x-charts": "^7.16.0",
+    "@next/env": "^15.1.5",
     "axios": "^1.4.0",
     "chart.js": "^4.4.4",
     "dotenv": "^16.4.7",

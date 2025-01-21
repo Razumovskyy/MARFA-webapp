@@ -1,5 +1,9 @@
 /** @type {import("next").NextConfig} */
+
 const nextConfig = {
+  env: {
+
+  },
   typescript: {
     ignoreBuildErrors: true
   },

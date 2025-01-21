@@ -2,10 +2,12 @@ import React from "react"
 import { useMolecularSpectreData } from "@/entities/MoleculeSpectre/models/MoleculeSpectreContext"
 import * as Styled from "./CalculationPanel.styles"
 import { Typography } from "@mui/material"
-import { Button } from "@/shared/ui"
-import { SuccessMessage } from "@/entities/MoleculeSpectre"
+import { Button, StyledCard, StyledCardContent } from "@/shared/ui"
+import { ResultParams, SuccessMessage } from "@/entities/MoleculeSpectre"
 import Link from "next/link"
 import { SpectreChart } from "@/features/MoleculeSpectre/SpectreChart"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward"
 
 export const ResultPanel = () => {
   const { screenState, setScreenState, zipUrl } = useMolecularSpectreData()
@@ -22,18 +24,30 @@ export const ResultPanel = () => {
     <>
       {screenState === 1 &&
         <Styled.ResultPanelMainDiv>
-          <Button sx={{ alignSelf: "flex-start" }} onClick={handleClickBack} variant={"outlined"}
+          <Button startIcon={<ArrowBackIcon />} sx={{ alignSelf: "flex-start" }} onClick={handleClickBack}
+                  variant={"outlined"}
                   color={"primary"}>Back</Button>
-          <Typography variant={"h2"}>Parameters</Typography>
           <SuccessMessage />
-          <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Download Results</Typography>
-          <Styled.DownloadDataContainer>
-            <Button variant={"contained"} color={"primary"} onClick={downloadData}>Download </Button>
-            <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontStyle: "italic" }}>See the <Link
-              href={"/format"} target={"_blank"}>data format</Link></Typography>
-          </Styled.DownloadDataContainer>
-          <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Visualization Options</Typography>
-          <SpectreChart />
+          <Styled.CardsDiv>
+            <ResultParams />
+            <StyledCard sx={{ height: "95.485%" }} >
+              <StyledCardContent>
+                <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Download Results</Typography>
+                <Styled.DownloadDataContainer>
+                  <Button startIcon={<ArrowDownwardIcon />} variant={"contained"} color={"primary"}
+                          onClick={downloadData}>Download </Button>
+                  <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontStyle: "italic" }}>See the <Link
+                    href={"/format"} target={"_blank"}>data format</Link></Typography>
+                </Styled.DownloadDataContainer>
+              </StyledCardContent>
+            </StyledCard>
+          </Styled.CardsDiv>
+          <StyledCard>
+            <StyledCardContent sx={{ alignItems: "center" }}>
+              <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Visualization Options</Typography>
+              <SpectreChart />
+            </StyledCardContent>
+          </StyledCard>
         </Styled.ResultPanelMainDiv>
       }
     </>
