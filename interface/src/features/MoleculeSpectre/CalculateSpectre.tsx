@@ -17,7 +17,7 @@ export const CalculateSpectre = () => {
   const theme = useTheme()
   const { screenState, setScreenState, setZipUrl, setId, setSpectreData } = useMolecularSpectreData()
   const [visibleDensity, setVisibleDensity] = useState(true)
-
+  const [requestError, setRequestError] = useState<null | string>(null)
   const methods = useForm<moleculeSpectreFormData>({
     defaultValues: initialFormValues,
     resolver: yupResolver(moleculeSpectreValidationSchema),
@@ -30,7 +30,6 @@ export const CalculateSpectre = () => {
     handleSubmit,
     control,
     formState: { errors },
-    setError,
   } = methods
 
   const onSubmit = (data: moleculeSpectreFormData) => {
@@ -40,20 +39,22 @@ export const CalculateSpectre = () => {
       setIsLoading(false)
       setSpectreData({
         ...request_data,
-        target_value: request_data.target_value === "VAC" ? "Volume absorption coefficient [km^-1]" : "Absorption cross-section [cm^2]",
+        target_value: request_data.target_value === "VAC" ? "volume absorption coefficient" : "absorption cross-section",
+        species: data.species?.label,
       })
       setId(res.data.id)
       setZipUrl(res.data.download_link)
       setScreenState(1)
     }).catch(err => {
+      if (err.response.status === 500) {
+        setRequestError("Error occurred while running MARFA executable.")
+        setTimeout(() => {
+          setRequestError(null)
+        }, 10000)
+      }
     }).finally(() => {
       setIsLoading(false)
     })
-  }
-
-
-  const goToDataFormat = () => {
-    window.open("/data-format", "_self")
   }
 
 
@@ -71,7 +72,7 @@ export const CalculateSpectre = () => {
                 label={"Select spectral database ..."}
                 onChange={(event, value) => field.onChange(value)}
                 value={field.value["label"]}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 error={!!errors.spectral_line}
                 errorMessage={errors.spectral_line?.message}
               />
@@ -90,7 +91,7 @@ export const CalculateSpectre = () => {
                   field.onChange(value)
                 }}
                 value={field.value}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 error={!!errors.species}
                 errorMessage={errors.species?.message}
               />
@@ -107,7 +108,7 @@ export const CalculateSpectre = () => {
                   <TextField
                     value={field.value}
                     {...field}
-                    style={{ width: "137px" }}
+                    style={{ width: theme.spacing(46) }}
                     label={""}
                     variant={"outlined"}
                     error={!!errors.first_spectral_interval}
@@ -123,7 +124,7 @@ export const CalculateSpectre = () => {
                   <TextField
                     value={field.value}
                     {...field}
-                    style={{ width: "137px" }}
+                    style={{ width: theme.spacing(46) }}
                     label={""}
                     variant={"outlined"}
                     error={!!errors.second_spectral_interval}
@@ -140,7 +141,7 @@ export const CalculateSpectre = () => {
               <TextField
                 value={field.value}
                 {...field}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 label={"Line cut-off condition (e.g. 125 cm⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.line_cut_off_condition}
@@ -155,7 +156,7 @@ export const CalculateSpectre = () => {
               <TextField
                 value={field.value}
                 {...field}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 label={"Temperature (e.g. 300 K)"}
                 variant={"outlined"}
                 error={!!errors.temperature}
@@ -170,7 +171,7 @@ export const CalculateSpectre = () => {
               <TextField
                 value={field.value}
                 {...field}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 label={"Pressure (e.g. 1 atm)"}
                 variant={"outlined"}
                 error={!!errors.pressure}
@@ -190,7 +191,7 @@ export const CalculateSpectre = () => {
                   setVisibleDensity(!!value && value["value"] === "ACS")
                 }}
                 value={field.value}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 error={!!errors.target_value}
                 errorMessage={errors.target_value?.message}
               />
@@ -204,7 +205,7 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 disabled={visibleDensity}
-                style={{ width: theme.spacing(76) }}
+                style={{ width: theme.spacing(100) }}
                 label={"Number Density (e.g. 1E25 cm⁻²·km⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.density}
@@ -215,6 +216,8 @@ export const CalculateSpectre = () => {
           <Styled.SendDataContainer>
             <Button disabled={isLoading} onClick={handleSubmit(onSubmit)} variant={"contained"}
                     color={"primary"}>Calculate</Button>
+            {!!requestError &&
+              <Typography sx={{ color: theme.palette.error.main }} variant={"caption"} fontWeight={"small"} fontSize={"small"}>{requestError}</Typography>}
             {isLoading && <CircularProgress size={theme.spacing(6)} />}
           </Styled.SendDataContainer>
         </FormProvider>

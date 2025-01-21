@@ -9,7 +9,7 @@ export const StyledAppBar = styled(AppBar)(({ theme }) => ({
   width: "100vw",
   zIndex: 1200,
   height: 75,
-  backgroundColor: "#d5dbe5",
+  backgroundColor: theme.palette.secondary.dark,
   boxShadow: "0 2px 4px rgb(0 0 0 / 5%)",
   paddingLeft: theme.spacing(2),
   paddingRight: theme.spacing(2),
@@ -34,7 +34,7 @@ export const StyledImage = styled(Image)(({ theme }) => ({
 }))
 
 export const ProjectName = styled(Typography)(({ theme }) => ({
-  color: "#1E4E79",
+  color: theme.palette.primary.main,
 }))
 
 export const FeaturesContainer = styled("div")(({ theme }) => ({
@@ -59,7 +59,7 @@ export const LogoContainer = styled(Link)(({ theme }) => ({
 }))
 
 export const VerticalLine = styled("div")(({ theme }) => ({
-  color: "#1E4E79",
+  color: theme.palette.primary.main,
   fontSize: "1.5rem",
   fontWeight: "700",
 }))

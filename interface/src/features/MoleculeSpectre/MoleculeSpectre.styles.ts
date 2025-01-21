@@ -41,8 +41,8 @@ export const SpectreChartMainContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   justifyContent: "flex-start",
-  alignItems: "flex-start",
-  alignSelf: "flex-start",
+  alignItems: "center",
+  alignSelf: "center",
   padding: `0px ${theme.spacing(40)}`,
   [theme.breakpoints.down("sm")]: {
     padding: 0,
@@ -52,12 +52,18 @@ export const SpectreChartMainContainer = styled("div")(({ theme }) => ({
 export const ChartFormContainer = styled("form")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  alignItems: "flex-start",
+  alignItems: "center",
   justifyContent: "flex-start",
   gap: theme.spacing(6),
 }))
 
-export const ChartParamContainer = styled("div")(({ theme }) => ({
+export const ChartParamContainer = styled("div")(({ theme }) => (({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(1),
+})))
+
+export const ChartFieldsContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
@@ -80,8 +86,7 @@ export const ChartContainer = styled("div")(({ theme }) => ({
 export const FetchChartContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
-  justifyContent: "flex-start",
+  justifyContent: "center",
   alignItems: "center",
   gap: theme.spacing(4),
-  alignSelf: "flex-start"
 }))
