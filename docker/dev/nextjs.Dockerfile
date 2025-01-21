@@ -1,0 +1,8 @@
+FROM node:20
+WORKDIR /myapp
+ARG NEXT_PUBLIC_HOST_API
+ENV NEXT_PUBLIC_HOST_API=$NEXT_PUBLIC_HOST_API
+COPY ../../interface .
+RUN npm install
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
