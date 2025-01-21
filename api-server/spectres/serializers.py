@@ -74,8 +74,17 @@ class PlotSpectreSerializer(serializers.Serializer):
     v2 = serializers.FloatField(write_only=True, required=True)
 
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validates incoming spectral boundaries v1 and v2 for plotting.
+        """
         spectre = attrs["pk"]
-        if not spectre.v_start <= attrs.get('v1') < attrs.get('v2') <= spectre.v_end:
-            raise serializers.ValidationError({'Invalid v1 and v2'})
+        v1 = attrs["v1"]
+        v2 = attrs["v2"]
+        if not spectre.v_start <= v1 < v2:
+            raise serializers.ValidationError({f'Invalid value v1: {v1}: must be less than {v2} and bigger than or '
+                                               f'equal to {spectre.v_start}'})
+        if not v1 < v2 <= spectre.v_end:
+            raise serializers.ValidationError({f'Invalid value v2: {v2}: must be bigger than {v1} and less than or '
+                                               f'equal to {spectre.v_end}'})
         attrs["spectre"] = spectre
         return attrs
