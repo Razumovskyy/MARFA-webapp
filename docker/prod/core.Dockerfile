@@ -1,5 +1,4 @@
 FROM python:3.12-slim AS base
-
 LABEL authors="mrazumovskyy"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
