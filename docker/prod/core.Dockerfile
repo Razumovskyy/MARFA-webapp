@@ -26,7 +26,7 @@ ENV PATH=/root/.local/bin:$PATH
 
 COPY . .
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./core/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 8001
