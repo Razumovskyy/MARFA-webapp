@@ -3,7 +3,7 @@ name: Deploy MARFA-webapp
 on:
   push:
     branches:
-      - feat/ci-cd-optimization
+      - main
 
 jobs:
   production-deploy:
