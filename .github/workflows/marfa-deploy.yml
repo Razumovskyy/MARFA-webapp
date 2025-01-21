@@ -1,7 +1,9 @@
 name: Deploy MARFA-webapp
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - feat/ci-cd-optimization
 
 jobs:
   production-deploy:
@@ -28,7 +30,10 @@ jobs:
 
       - name: debug
         run: |
+          echo ${{ steps.filter.outputs.interface_dockerfile }}
           echo ${{ steps.filter.outputs.interface }}
+          echo *********
+          echo ${{ steps.filter.output.core_dockerfile }}
           echo ${{ steps.filter.outputs.api-server }}
           echo ${{ steps.filter.outputs.core }}
 
