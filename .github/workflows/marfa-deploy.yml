@@ -22,9 +22,9 @@ jobs:
             interface:
               - 'interface/**'
             core_dockerfile:
-              - 'docker/prod/core.Dockerfile
+              - 'docker/prod/core.Dockerfile'
             interface_dockerfile:
-              - 'docker/prod/interface.Dockerfile
+              - 'docker/prod/interface.Dockerfile'
 
       - name: Setup Docker Buildx
         if: | 
