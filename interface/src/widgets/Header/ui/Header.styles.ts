@@ -40,7 +40,7 @@ export const ProjectName = styled(Typography)(({ theme }) => ({
 export const FeaturesContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
-  alignItems: "center",
+  alignItems: "baseline",
   justifyContent: "flex-end",
   gap: theme.spacing(4),
   [theme.breakpoints.down("sm")]: {

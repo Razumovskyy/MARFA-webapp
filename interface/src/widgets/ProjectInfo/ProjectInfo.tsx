@@ -2,11 +2,12 @@
 // @ts-nocheck
 import React from "react"
 import * as Styled from "./ui/ProjectInfo.styles"
-import { Grid, Card, CardContent } from "@mui/material"
+import { Grid, Card, CardContent, useTheme } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Button, StyledCard } from "@/shared/ui"
 
 export const ProjectInfo = () => {
+  const theme = useTheme()
 
   const goToCalculation = () => {
     window.location.href = "/"

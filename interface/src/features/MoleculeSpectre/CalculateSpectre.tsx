@@ -69,7 +69,7 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 disabled={true}
                 options={spectralLinesDatabases}
-                label={"Select spectral database ..."}
+                label={"Select spectral database"}
                 onChange={(event, value) => field.onChange(value)}
                 value={field.value["label"]}
                 style={{ width: theme.spacing(100) }}
@@ -85,7 +85,7 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 size={"medium"}
                 options={moleculeOptions}
-                label={"Select species ..."}
+                label={"Select species"}
                 onChange={(event, value) => {
                   setShowCO2Fields(!!value && value["label"] === "CO2")
                   field.onChange(value)

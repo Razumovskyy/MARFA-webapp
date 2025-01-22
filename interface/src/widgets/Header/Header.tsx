@@ -13,15 +13,15 @@ export const Header = () => {
         </Styled.LogoContainer>
         <Styled.FeaturesContainer>
           <Link href={"/"}>
-            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}><i>Home</i></Typography>
+            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>Home</Typography>
           </Link>
           <Styled.VerticalLine>|</Styled.VerticalLine>
           <Link href={"/format"}>
-            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}><i>Data format</i></Typography>
+            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>Data format</Typography>
           </Link>
           <Styled.VerticalLine>|</Styled.VerticalLine>
           <Link href={"/about"}>
-            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}><i>About</i></Typography>
+            <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>About</Typography>
           </Link>
         </Styled.FeaturesContainer>
       </Styled.StyledToolbar>

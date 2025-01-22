@@ -1,37 +1,35 @@
-"use client"
 import { AutocompleteRenderInputParams, Autocomplete as MuiAutocomplete } from "@mui/material"
-import { TextField } from "@/shared/ui"
+import { TextField } from "../TextField/TextField"
 import { AutocompleteEvent, IAutocomplete, OptionType } from "./Autocomplete.types"
 import { IStyle, Size } from "../styles.const"
+import * as React from "react"
 
-const getStyles = (width?: string | number, disabled?: boolean, style?: IStyle) => ({
+const getStyles = (width?: string | number, style?: IStyle) => ({
   minWidth: width,
   width: "100%",
   ".MuiSvgIcon-fontSizeMedium": {
-    display: disabled ? "none" : "visible",
     scale: "1.5",
-    marginTop: "5px",
   },
   ...style,
 })
 
 export const Autocomplete = ({
-  id,
-  key,
-  name,
-  value,
-  options,
-  onChange,
-  filterChange,
-  label,
-  size = Size.medium,
-  width,
-  disabled,
-  style,
-  onReset,
-  error,
-  errorMessage,
-}: IAutocomplete) => {
+                               id,
+                               key,
+                               name,
+                               value,
+                               options,
+                               onChange,
+                               filterChange,
+                               label,
+                               size = Size.medium,
+                               width,
+                               disabled,
+                               style,
+                               onReset,
+                               error,
+                               errorMessage,
+                             }: IAutocomplete) => {
   const handleChange = (e: AutocompleteEvent, value: OptionType | null | string) => {
     if (typeof value === "string") return
     if ((value === null || value?.id === null) && onReset)
@@ -54,30 +52,46 @@ export const Autocomplete = ({
       key={key || id}
       id={id}
       value={value}
+      // @ts-ignore
       onChange={handleChange}
       options={options}
       disabled={disabled}
+      disableClearable={!onReset}
       clearText=""
       openText=""
       closeText=""
       noOptionsText="Нет опций для выбора"
-      renderInput={(params: AutocompleteRenderInputParams) => {
-        return (
-          <TextField
-            name={name}
-            error={!!error}
-            // @ts-ignore
-            helperText={errorMessage as string}
-            params={handleNullableValue(params)}
-            variant="outlined"
-            value={value}
-            label={label}
-            size={size}
-            style={getStyles(width, disabled, style)}
-            disabled={disabled}
-          />
-        )
-      }}
+      renderInput={(params: AutocompleteRenderInputParams) => (
+        <TextField
+          name={name}
+          error={!!error}
+          // @ts-ignore
+          helperText={errorMessage}
+          params={handleNullableValue(params)}
+          variant="outlined"
+          value={value}
+          label={label}
+          size={size}
+          style={getStyles(width, style)}
+          disabled={disabled}
+          disableTooltip={true}
+        />
+      )}
+      renderOption={(props, _, state) => (
+        <li
+          {...props}
+          aria-selected={state.inputValue === props.key}
+          style={{
+            backgroundColor: state.inputValue === props.key ? "#DEE7F2" : "#F9F9F9",
+            cursor: "pointer",
+            transition: "background-color 0.2s ease-in-out",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#efefef")}
+          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = state.inputValue === props.key ? "#DEE7F2" : "#F9F9F9")}
+        >
+          {props.key}
+        </li>
+      )}
     />
   )
 }
