@@ -1,8 +1,8 @@
 FROM node:20
 WORKDIR /myapp
-ARG NEXT_PUBLIC_HOST_API
+ARG NEXT_PUBLIC_HOST_API=http://127.0.0.1:8001
 ENV NEXT_PUBLIC_HOST_API=$NEXT_PUBLIC_HOST_API
-COPY ../../interface .
+COPY . .
 RUN npm install
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
