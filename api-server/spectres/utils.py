@@ -7,6 +7,7 @@ Description:
 """
 import shutil
 import subprocess
+import gc
 from pathlib import Path
 from typing import Tuple
 
@@ -171,5 +172,7 @@ def generate_plot(x_data, y_data, y_title):
 
     svg_content = svg_buffer.getvalue()
     svg_buffer.close()
+
+    gc.collect()
 
     return svg_content
