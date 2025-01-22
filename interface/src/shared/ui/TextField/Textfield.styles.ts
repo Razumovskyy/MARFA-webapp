@@ -17,6 +17,9 @@ export const getStyles = (
   "& .MuiOutlinedInput-notchedOutline ": {
     top: 0,
   },
+  "& .MuiInputBase-input.Mui-disabled": {
+    WebkitTextFillColor: "#9F9FA2",
+  },
   "& legend": { display: "none" },
   "& .MuiInputLabel-root": {
     top: value ? -13 : -6,
@@ -31,6 +34,7 @@ export const getStyles = (
     },
   },
   "& .MuiInputBase-root": {
+    backgroundColor: themes.palette.background.default,
     paddingBlock: "2px 2px",
     borderRadius: "12px",
     "& .MuiInputBase-input": {
@@ -50,21 +54,20 @@ export const getStyles = (
     },
   },
   "& .Mui-disabled": {
-    color: `${themes.palette.additional.gray}!important`,
+    color: `${themes.palette.additional.gray}`,
+    "-webkit-text-fill-color": `${themes.palette.additional.light}`,
     "& fieldset": {
-      //backgroundColor: themes.palette.text.disabled,
+      backgroundColor: themes.palette.text.disabled,
       height: height && `${height}px`,
-      color: "#000"
+      border: "none",
+      opacity: 0.4,
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      border: "none"
-    },
-    "& .MuiOutlinedInput-input": {
-      color: "#000!important",
+      border: "none",
     },
   },
   "&.MuiInputBase-sizeLarge_x": {
-    "& div": {
+    "& > div": {
       height: themes.spacing(16),
     },
     "& .MuiInputLabel-root": {
@@ -75,7 +78,7 @@ export const getStyles = (
     },
   },
   "&.MuiInputBase-sizeLarge": {
-    "& div": {
+    "& > div": {
       borderRadius: themes.spacing(3),
       height: themes.spacing(12),
     },
@@ -87,13 +90,13 @@ export const getStyles = (
     },
   },
   "&.MuiInputBase-sizeMedium": {
-    "& div": {
+    "& > div": {
       borderRadius: themes.spacing(2),
-      height: themes.spacing(10),
+      maxHeight: themes.spacing(10),
     },
   },
   "&.MuiInputBase-sizeSmall": {
-    "& div": {
+    "& > div": {
       borderRadius: themes.spacing(2),
       height: themes.spacing(8),
     },

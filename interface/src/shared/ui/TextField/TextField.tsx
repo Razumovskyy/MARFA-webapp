@@ -56,7 +56,7 @@ const TextField = ({
   onKeyDown,
   width,
   height,
-  disableTooltip = false,
+  disableTooltip = true,
 }: ITextField) => {
   const styles = getStyles(value, style, color, borderBottomColor, width, height, String(helperText))
   const themes = useTheme()

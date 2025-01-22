@@ -7,7 +7,7 @@ export const ProjectInfoContainer = styled("div")(({ theme }) => ({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  gap: theme.spacing(10),
+  gap: theme.spacing(6),
   width: "100%",
   padding: `${theme.spacing(0)} ${theme.spacing(31)}`,
   marginTop: theme.spacing(24),
