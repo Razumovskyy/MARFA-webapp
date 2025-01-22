@@ -157,6 +157,7 @@ program main
     end do SUBINTERVALS_LOOP
         
     close(outputUnit)
+    deallocate(TIPS)
     call cpu_time(endTime)
     write(*,'(A,F7.3,A)') 'Took: ', endTime - startTime, ' seconds'
     write(*,*) 'Successful exit'
