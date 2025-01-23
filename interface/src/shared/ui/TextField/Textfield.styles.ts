@@ -57,7 +57,7 @@ export const getStyles = (
     color: `${themes.palette.additional.gray}`,
     "-webkit-text-fill-color": `${themes.palette.additional.light}`,
     "& fieldset": {
-      backgroundColor: themes.palette.text.disabled,
+      backgroundColor: themes.palette.additional.gray,
       height: height && `${height}px`,
       border: "none",
       opacity: 0.4,

@@ -138,13 +138,17 @@ def generate_zip_archive(directory: Path) -> Path:
     return Path(archive_name)
 
 
-def generate_plot(x_data, y_data, y_title):
+def generate_plot(x_data: list[np.float32], y_data: list[np.float32], y_title: str) -> str:
     """
-    Генерирует график с использованием matplotlib и возвращает его в формате SVG.
+    Generates a plot using matplotlib and returns it in SVG format.
 
-    :param x_data: Данные по оси X
-    :param y_data: Данные по оси Y
-    :return: Строка с содержимым SVG
+    Args:
+        x_data(list[np.float32]): X-axis data
+        y_data(list[np.float32]): Y-axis data
+        y_title(str): Title of chart
+
+    Returns:
+        str: string with svg image
     """
     matplotlib.use("agg")
     plt.figure(figsize=(12, 6))
