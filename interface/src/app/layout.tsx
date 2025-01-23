@@ -7,6 +7,11 @@ import useTheme from "@/shared/theme/useTheme"
 
 export const metadata: Metadata = {
   title: "MARFA",
+  description: "Molecular atmospheric Absorption with Rapid and Flexible Analysis (MARFA)",
+  icons: {
+    icon: ["/favicon.ico"],
+    shortcut: ["/apple-touch-icon.png"]
+  }
 }
 
 export default function RootLayout({
@@ -19,10 +24,6 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-    <head>
-      <link rel="icon" href="/public/favicon.ico" sizes="any" />
-      <title>MARFA</title>
-    </head>
     <StyledEngineProvider injectFirst>
       <AppRouterCacheProvider options={{ enableCssLayer: true }}>
         <ThemeProvider theme={theme}>
