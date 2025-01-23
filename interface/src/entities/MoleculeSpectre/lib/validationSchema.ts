@@ -36,12 +36,14 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
     .typeError("Enter a number")
     .min(0, "Minimum number is 0"),
   density: yup
-    .number()
-    .typeError("Enter a number")
-    .min(0, "Minimum number is 0")
+    .string()
     .when("spectral_line", {
       is: (value) => value === "VAC",
-      then: (schema) => schema.required("Enter a number"),
+      then: (schema) =>
+        schema
+          .required("Enter a number")
+          .min(0, "Minimum number is 0")
+          .max(1000, "Maximum number is 1000"),
       otherwise: (schema) => schema.notRequired(),
     }),
 })

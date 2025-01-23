@@ -28,11 +28,16 @@ export const CalculateSpectre = () => {
 
   const {
     handleSubmit,
+    setError,
     control,
     formState: { errors },
   } = methods
 
   const onSubmit = (data: moleculeSpectreFormData) => {
+    if (!Number(data.density) && data.target_value?.value === "VAC") {
+      setError("density", { type: "server", message: "Enter a number." })
+      return
+    }
     setIsLoading(true)
     let request_data = formDataToRequestMapper(data)
     getSpectre(request_data).then(res => {
@@ -217,7 +222,8 @@ export const CalculateSpectre = () => {
             <Button disabled={isLoading} onClick={handleSubmit(onSubmit)} variant={"contained"}
                     color={"primary"}>Calculate</Button>
             {!!requestError &&
-              <Typography sx={{ color: theme.palette.error.main }} variant={"caption"} fontWeight={"small"} fontSize={"small"}>{requestError}</Typography>}
+              <Typography sx={{ color: theme.palette.error.main }} variant={"caption"} fontWeight={"small"}
+                          fontSize={"small"}>{requestError}</Typography>}
             {isLoading && <CircularProgress size={theme.spacing(6)} />}
           </Styled.SendDataContainer>
         </FormProvider>
