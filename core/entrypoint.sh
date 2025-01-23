@@ -10,5 +10,6 @@ python manage.py migrate --noinput
 
 exec gunicorn marfa_app.wsgi:application \
     --bind 0.0.0.0:8001 \
+    --timeout 180 \
     --access-logfile '-' \
     --error-logfile '-'
