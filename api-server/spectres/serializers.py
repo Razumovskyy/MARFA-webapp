@@ -25,7 +25,7 @@ class SpectreSerializer(serializers.ModelSerializer):
     v_start = serializers.FloatField(write_only=True, required=True)
     v_end = serializers.FloatField(write_only=True, required=True)
     database_slug = serializers.CharField(write_only=True, required=True)
-    line_cut_off = serializers.IntegerField(write_only=True, required=True)
+    line_cut_off = serializers.FloatField(write_only=True, required=True)
     pressure = serializers.FloatField(write_only=True, required=True)
     density = serializers.FloatField(write_only=True, required=True)
     temperature = serializers.FloatField(write_only=True, required=True)
