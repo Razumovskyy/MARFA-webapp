@@ -61,7 +61,7 @@ export const ProjectInfo = () => {
             The <b>MARFA</b> tool is described in detail in the following preprint:
             <br />
             <>
-              <Typography variant={"body1"} fontSize={"medium"} fontWeight={"small"}>Razumovskiy, Mikhail, Boris
+              <Typography variant={"body1"} fontSize={"medium"} fontWeight={"small"}>Razumovskiy Mikhail, Boris
                 Fomin, and Denis Astanin.</Typography>
               <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}>
                 <a href={"https://arxiv.org/abs/2411.03418"} target={"_blank"}>"MARFA: An Effective Line-by-line Tool
