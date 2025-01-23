@@ -1,12 +1,9 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
 import { Header } from "@/widgets"
 import { StyledEngineProvider, ThemeProvider } from "@mui/material"
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter"
 import useTheme from "@/shared/theme/useTheme"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "MARFA",
@@ -22,6 +19,10 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+    <head>
+      <link rel="icon" href="/public/favicon.ico" sizes="any" />
+      <title>MARFA</title>
+    </head>
     <StyledEngineProvider injectFirst>
       <AppRouterCacheProvider options={{ enableCssLayer: true }}>
         <ThemeProvider theme={theme}>
