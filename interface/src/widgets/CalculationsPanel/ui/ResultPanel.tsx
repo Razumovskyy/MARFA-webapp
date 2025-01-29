@@ -30,7 +30,7 @@ export const ResultPanel = () => {
           <SuccessMessage />
           <Styled.CardsDiv>
             <ResultParams />
-            <StyledCard sx={{ height: "95.485%" }} >
+            <StyledCard sx={{ height: "95.485%" }}>
               <StyledCardContent>
                 <Typography sx={{ alignSelf: "center" }} variant={"h2"}>Download Results</Typography>
                 <Styled.DownloadDataContainer>
@@ -39,6 +39,15 @@ export const ResultPanel = () => {
                   <Typography variant={"caption"} fontWeight={"medium"} sx={{ fontStyle: "italic" }}>See the <Link
                     href={"/format"} target={"_blank"}>data format</Link></Typography>
                 </Styled.DownloadDataContainer>
+                <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}>
+                  The downloaded archive includes: <br />
+                  <b>info.txt:</b> Metadata about the calculation, including input parameters.<br />
+                  <b>pt-table.ptbin:</b> Binary absorption data. See documentation for structure details.<br />
+                  <b>output.dat:</b> Absorption data in a readable format (large file size may occure because of high
+                  resolution).<br />
+                  <b>stderr.log:</b> Standard error output from MARFA.<br />
+                  <b>stdout.log:</b> Standard output from MARFA.
+                </Typography>
               </StyledCardContent>
             </StyledCard>
           </Styled.CardsDiv>
