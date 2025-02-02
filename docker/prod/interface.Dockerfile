@@ -1,7 +1,6 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /myapp
 ARG NEXT_PUBLIC_HOST_API=https://marfa.app
-# ENV NEXT_PUBLIC_HOST_API=$NEXT_PUBLIC_HOST_API
 COPY . .
 RUN npm install
 RUN npm run build
