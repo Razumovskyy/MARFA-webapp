@@ -5,6 +5,7 @@ Authors:
 Description:
     This module is a part of the MARFA-webapp project.
 """
+import math
 import os
 import shutil
 from pathlib import Path
@@ -40,7 +41,7 @@ def base_parser(pttable_file: Path, v1: float, v2: float) -> tuple[list[np.float
             - Second element: List of corresponding absorption values as np.float32.
     """
     start_record_number = int(v1 / 10.0)
-    end_record_number = int((v2 - 1) / 10.0)
+    end_record_number = int((math.ceil(v2) - 1) / 10.0)
     num_records = end_record_number - start_record_number + 1
     step = RECORD_WV_SPAN / (POINTS_PER_RECORD - 1)
 

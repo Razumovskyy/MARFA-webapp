@@ -90,7 +90,7 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 size={"medium"}
                 options={moleculeOptions}
-                label={"Select species"}xx
+                label={"Select species"} xx
                 onChange={(event, value) => {
                   setShowCO2Fields(!!value && value["label"] === "CO2")
                   field.onChange(value)
@@ -121,7 +121,8 @@ export const CalculateSpectre = () => {
                   />
                 )}
               />
-              <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>—</Typography>
+              <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}
+                          sx={{ color: "black" }}>—</Typography>
               <Controller
                 name="second_spectral_interval"
                 control={control as Control<FieldValues>}
