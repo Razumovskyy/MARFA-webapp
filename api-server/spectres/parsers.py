@@ -54,7 +54,7 @@ def base_parser(pttable_file: Path, v1: float, v2: float) -> tuple[list[np.float
             if seek_position >= os.path.getsize(pttable_file):
                 raise IndexError(f"Record number {record_number} exceeds a file size.")
             f.seek(seek_position)
-            binary_abs_data = f.read(RECORD_SIZE)  # reads absorption data from one record
+            binary_abs_data = f.read(RECORD_SIZE)
 
             abs_data = np.frombuffer(binary_abs_data, dtype=np.float32)
 
