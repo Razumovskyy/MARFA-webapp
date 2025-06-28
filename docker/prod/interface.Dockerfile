@@ -2,7 +2,7 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /myapp
 ARG NEXT_PUBLIC_HOST_API=https://marfa.app
 COPY . .
-RUN npm install
+RUN npm install -- force
 RUN npm run build
 
 FROM node:20-slim
