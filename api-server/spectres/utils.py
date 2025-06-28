@@ -169,6 +169,7 @@ def generate_plot(x_data: list[np.float32], y_data: list[np.float32], y_title: s
 
     ax.minorticks_on()
     ax.tick_params(axis='y', which='both', right=True)
+    ax.autoscale(enable=True, axis='both', tight=True)
 
     svg_buffer = io.StringIO()
     plt.savefig(svg_buffer, format='svg', bbox_inches='tight')
