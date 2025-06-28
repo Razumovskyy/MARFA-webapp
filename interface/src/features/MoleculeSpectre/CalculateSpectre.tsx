@@ -90,7 +90,7 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 size={"medium"}
                 options={moleculeOptions}
-                label={"Select species"}
+                label={"Select species"}xx
                 onChange={(event, value) => {
                   setShowCO2Fields(!!value && value["label"] === "CO2")
                   field.onChange(value)

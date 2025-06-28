@@ -32,7 +32,7 @@ export const SpectreIntervalContainer = styled("div")(({ theme }) => ({
 export const FieldsContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
-  alignItems: "baseline",
+  alignItems: "center",
   justifyContent: "flex-start",
   gap: theme.spacing(2),
 }))
