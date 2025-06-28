@@ -90,7 +90,7 @@ export const ProjectInfo = () => {
                 , mrazumovskyy@gmail.com
               </li>
               <li>
-                <b>Denis Astanin</b>, web developer at BiTronics Lab:{" "}
+                <b>Denis Astanin</b>, AI/Web developer at Devstark:{" "}
                 <a
                   href="https://github.com/DisaAst"
                   target="_blank"
