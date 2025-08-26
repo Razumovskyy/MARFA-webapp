@@ -81,10 +81,10 @@ def get_plot(request: Request) -> Response:
     serializer = PlotSpectreSerializer(data=request.query_params)
     serializer.is_valid(raise_exception=True)
     validated = serializer.validated_data
-    spectre, v1, v2 = validated['spectre'], validated['v1'], validated['v2']
+    spectre, v1, v2, is_logarithmic = validated['spectre'], validated['v1'], validated['v2'], validated['is_logarithmic']
     x_data, y_data = plot_parser(spectre, v1, v2)
     y_title = Spectre.objects.get(id=spectre.pk).target_value
-    plot = generate_plot(x_data, y_data, y_title)
+    plot = generate_plot(x_data, y_data, y_title, is_logarithmic)
     return Response(status=status.HTTP_200_OK, data={"plot": plot})
 
 

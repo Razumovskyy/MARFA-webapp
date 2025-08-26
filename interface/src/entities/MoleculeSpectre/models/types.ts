@@ -26,4 +26,5 @@ export type requestFormData = {
 export type chartSpectreFormData = {
   v1: number,
   v2: number,
+  is_logarithmic: boolean,
 }

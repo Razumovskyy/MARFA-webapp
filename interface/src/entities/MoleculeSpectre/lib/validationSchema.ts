@@ -51,4 +51,5 @@ export const moleculeSpectreValidationSchema = yup.object().shape({
 export const chartSpectreValidationSchema = yup.object().shape({
   v1: yup.number().required("Enter a number").typeError("Enter a number"),
   v2: yup.number().required("Enter a number").typeError("Enter a number"),
+  is_logarithmic: yup.boolean().required(),
 })

@@ -10,7 +10,9 @@ interface MoleculeSpectreContextType {
   setId: useStateType<number | null>;
   setZipUrl: useStateType<string | null>;
   id: number | null;
-  zipUrl: string | null
+  zipUrl: string | null;
+  spectreData: requestFormData | null;
+  setSpectreData: useStateType<requestFormData | null>;
 }
 
 const MoleculeSpectreContext = createContext<MoleculeSpectreContextType | undefined>(undefined)
