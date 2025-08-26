@@ -1,6 +1,75 @@
-test-runner:
+stages:
+  - build
+  - deploy
+
+variables:
+  REGISTRY_URL: cr.selcloud.ru
+  FRONTEND_IMAGE: cr.selcloud.ru/marfa/marfa-frontend:latest
+  CORE_IMAGE: cr.selcloud.ru/marfa/marfa-core:latest
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+
+.docker-build-template:
+  image: docker:24
+  tags:
+    - docker
+  services:
+    - name: docker:24-dind
+  before_script:
+    - docker info | sed -n '1,80p' | cat
+    - docker login "$REGISTRY_URL" -u token -p "$CONTAINER_REGISTRY_PASSWORD"
+    - docker buildx create --use --name marfa-builder || docker buildx use marfa-builder
+    - docker buildx inspect --bootstrap | cat
+
+build_frontend:
+  stage: build
+  extends: .docker-build-template
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'main'"
+      changes:
+        - interface/**/*
+        - docker/prod/interface.Dockerfile
+  script:
+    - docker buildx build --push -f docker/prod/interface.Dockerfile -t "$FRONTEND_IMAGE" ./interface
+
+build_core:
+  stage: build
+  extends: .docker-build-template
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'main'"
+      changes:
+        - core/**/*
+        - api-server/**/*
+        - docker/prod/core.Dockerfile
+  script:
+    - docker buildx build --push -f docker/prod/core.Dockerfile -t "$CORE_IMAGE" .
+
+deploy:
+  stage: deploy
   image: alpine:3.20
   tags:
     - docker
+  needs:
+    - job: build_frontend
+      optional: true
+    - job: build_core
+      optional: true
+  rules:
+    - if: "$CI_COMMIT_BRANCH == 'main'"
+      changes:
+        - interface/**/*
+        - docker/prod/interface.Dockerfile
+        - core/**/*
+        - api-server/**/*
+        - docker/prod/core.Dockerfile
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval "$(ssh-agent -s)"
+    - printf "%s" "$TEST_SERVER_SSH_KEY" | base64 -d | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - printf "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
-    - echo "Runner works $(hostname)"
+    - >-
+      ssh -p "$TEST_SERVER_PORT" "$TEST_USERNAME@$TEST_SERVER_IP"
+      "cd ./marfa && docker pull $FRONTEND_IMAGE && docker pull $CORE_IMAGE && docker compose down && docker compose up -d"
