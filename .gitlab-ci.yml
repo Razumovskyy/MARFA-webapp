@@ -1,0 +1,6 @@
+test-runner:
+  image: alpine:3.20
+  tags:
+    - docker
+  script:
+    - echo "Runner works $(hostname)"
