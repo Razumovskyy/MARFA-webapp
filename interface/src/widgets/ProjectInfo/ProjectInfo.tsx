@@ -7,8 +7,6 @@ import { Typography } from "@mui/material"
 import { Button, StyledCard } from "@/shared/ui"
 
 export const ProjectInfo = () => {
-  const theme = useTheme()
-
   // TODO refactor on navigate
   const goToCalculation = () => {
     window.location.href = "/"

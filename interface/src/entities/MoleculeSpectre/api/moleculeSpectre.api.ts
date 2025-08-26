@@ -1,12 +1,11 @@
 import { axiosInstance as axios } from "@/shared/api/axiosInstance"
-import { headers } from "next/headers"
 import { AxiosResponse } from "axios"
 import { commandCreateResponse } from "@/entities/MoleculeSpectre/api/types"
 import { chartSpectreFormData } from "@/entities/MoleculeSpectre/models/types"
 
+export const getSpectre = async (
+  params: Record<string, string | number | undefined>
+): Promise<AxiosResponse<commandCreateResponse>> => axios.post("/calculate_spectre/", { ...params })
 
-export const getSpectre = async (params: Record<string, string | number | undefined>): Promise<AxiosResponse<commandCreateResponse>> =>
-  axios.post("/calculate_spectre/", { ...params })
-
-export const fetchChart = async (params: chartSpectreFormData, id: number)=>
+export const fetchChart = async (params: chartSpectreFormData, id: number) =>
   axios.get(`/get_plot/`, { params: { ...params, pk: id } })

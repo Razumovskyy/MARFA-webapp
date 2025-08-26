@@ -139,7 +139,7 @@ def generate_zip_archive(directory: Path) -> Path:
     return Path(archive_name)
 
 
-def generate_plot(x_data: list[np.float32], y_data: list[np.float32], y_title: str) -> str:
+def generate_plot(x_data: list[np.float32], y_data: list[np.float32], y_title: str, is_logarithmic: bool = True) -> str:
     """
     Generates a plot using matplotlib and returns it in SVG format.
 
@@ -147,6 +147,7 @@ def generate_plot(x_data: list[np.float32], y_data: list[np.float32], y_title: s
         x_data(list[np.float32]): X-axis data
         y_data(list[np.float32]): Y-axis data
         y_title(str): Title of chart
+        is_logarithmic(bool): Whether to apply logarithmic scaling to y-axis data
 
     Returns:
         str: string with svg image
@@ -159,7 +160,10 @@ def generate_plot(x_data: list[np.float32], y_data: list[np.float32], y_title: s
         if y_title == 'ACS'
         else f'Volume Absorption Coefficient [km$^{{-1}}$]'
     )
-    y_data = np.log10(y_data)
+    
+    if is_logarithmic:
+        y_data = np.log10(y_data)
+        y_title = f'log$_{{10}}$({y_title})'
 
     ax.plot(x_data, y_data, color='g', linestyle='-')
 

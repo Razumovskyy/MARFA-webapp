@@ -8,7 +8,7 @@ import {
   resolutionsChart,
 } from "@/entities/MoleculeSpectre"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { CircularProgress, Typography, useTheme } from "@mui/material"
+import { CircularProgress, Typography, useTheme, FormControlLabel, Switch } from "@mui/material"
 import { Autocomplete, Button, TextField } from "@/shared/ui"
 import { chartSpectreValidationSchema } from "@/entities/MoleculeSpectre"
 import { chartSpectreFormData } from "@/entities/MoleculeSpectre/models/types"
@@ -18,7 +18,11 @@ export const SpectreChart = ({}) => {
   const theme = useTheme()
   const { id, spectreData } = useMolecularSpectreData()
   const methods = useForm<chartSpectreFormData>({
-    defaultValues: { v1: spectreData.v_start, v2: spectreData.v_end },
+    defaultValues: { 
+      v1: spectreData?.v_start || 0, 
+      v2: spectreData?.v_end || 0, 
+      is_logarithmic: true 
+    },
     resolver: yupResolver(chartSpectreValidationSchema),
   })
   const {
@@ -63,10 +67,11 @@ export const SpectreChart = ({}) => {
                 interval</Typography>
               <Styled.ChartFieldsContainer>
                 <Controller name="v1"
-                            control={control as Control<FieldValues>}
+                            control={control}
                             render={({ field }) => (
-                              <TextField value={field.value}
-                                         {...field}
+                              <TextField value={field.value.toString()}
+                                         onChange={(e) => field.onChange(Number(e.target.value))}
+                                         name={field.name}
                                          style={{ width: theme.spacing(46) }}
                                          variant={"outlined"}
                                          label={""}
@@ -77,10 +82,11 @@ export const SpectreChart = ({}) => {
                 />
                 <Typography variant={"body1"} fontSize={"medium"} fontWeight={"large"}>—</Typography>
                 <Controller name="v2"
-                            control={control as Control<FieldValues>}
+                            control={control}
                             render={({ field }) => (
-                              <TextField value={field.value}
-                                         {...field}
+                              <TextField value={field.value.toString()}
+                                         onChange={(e) => field.onChange(Number(e.target.value))}
+                                         name={field.name}
                                          style={{ width: theme.spacing(46) }}
                                          variant={"outlined"}
                                          label={""}
@@ -89,6 +95,27 @@ export const SpectreChart = ({}) => {
                               />
                             )}/>
               </Styled.ChartFieldsContainer>
+            </Styled.ChartParamContainer>
+            <Styled.ChartParamContainer>
+              <Typography variant={"caption"} fontSize={"small"} fontWeight={"small"} sx={{ width: "100%" }}>
+                Chart Options
+              </Typography>
+              <Controller name="is_logarithmic"
+                          control={control}
+                          render={({ field }) => (
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={field.value}
+                                  onChange={(e) => field.onChange(e.target.checked)}
+                                  name="is_logarithmic"
+                                  color="primary"
+                                />
+                              }
+                              label="Logarithmic scale"
+                            />
+                          )}
+              />
             </Styled.ChartParamContainer>
             <Styled.FetchChartContainer>
               <Button disabled={isLoading} variant={"outlined"} color={"primary"} onClick={handleSubmit(onSubmit)}>Generate

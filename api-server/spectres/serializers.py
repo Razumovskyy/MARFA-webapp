@@ -72,6 +72,7 @@ class PlotSpectreSerializer(serializers.Serializer):
     pk = serializers.PrimaryKeyRelatedField(queryset=Spectre.objects.all(), required=True)
     v1 = serializers.FloatField(write_only=True, required=True)
     v2 = serializers.FloatField(write_only=True, required=True)
+    is_logarithmic = serializers.BooleanField(write_only=True, required=False, default=True)
 
     def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         """
