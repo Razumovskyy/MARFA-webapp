@@ -1,5 +1,5 @@
 """
-Django settings for marfa_app project.
+Django settings for marfa project.
 """
 from pathlib import Path
 
