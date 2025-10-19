@@ -1,6 +1,7 @@
 import { TitleType } from "../TextField/TextField"
 import { IStyle, SizeType } from "../styles.const"
 import { SyntheticEvent } from "react"
+import { FilterOptionsState } from "@mui/material"
 
 export interface IAutocomplete {
   id?: string
@@ -18,6 +19,7 @@ export interface IAutocomplete {
   onReset?: (e: { target: { value: string | number; name: string; label: string } }) => void
   error?: unknown
   errorMessage?: unknown
+  filterOptions?: (options: TitleType[], state: FilterOptionsState<TitleType>) => TitleType[]
 }
 
 export type OptionType = {

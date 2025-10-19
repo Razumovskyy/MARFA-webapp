@@ -1,4 +1,4 @@
-import { AutocompleteRenderInputParams, Autocomplete as MuiAutocomplete } from "@mui/material"
+import { AutocompleteRenderInputParams, Autocomplete as MuiAutocomplete, FilterOptionsState } from "@mui/material"
 import { TextField } from "../TextField/TextField"
 import { AutocompleteEvent, IAutocomplete, OptionType } from "./Autocomplete.types"
 import { IStyle, Size } from "../styles.const"
@@ -29,6 +29,7 @@ export const Autocomplete = ({
                                onReset,
                                error,
                                errorMessage,
+                               filterOptions,
                              }: IAutocomplete) => {
   const handleChange = (e: AutocompleteEvent, value: OptionType | null | string) => {
     if (typeof value === "string") return
@@ -40,7 +41,7 @@ export const Autocomplete = ({
   }
 
   const handleNullableValue = (params: AutocompleteRenderInputParams) => {
-    const newValue = params.inputProps.value === "Не выбрано" ? "" : params.inputProps.value
+    const newValue = params.inputProps.value === "Not selected" ? "" : params.inputProps.value
     return {
       ...params,
       inputProps: { ...params.inputProps, value: newValue },
@@ -60,7 +61,8 @@ export const Autocomplete = ({
       clearText=""
       openText=""
       closeText=""
-      noOptionsText="Нет опций для выбора"
+      noOptionsText="No options"
+      filterOptions={filterOptions}
       renderInput={(params: AutocompleteRenderInputParams) => (
         <TextField
           name={name}

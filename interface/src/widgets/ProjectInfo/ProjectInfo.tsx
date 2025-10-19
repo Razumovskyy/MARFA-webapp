@@ -43,18 +43,18 @@ export const ProjectInfo = () => {
       <StyledCard>
         <CardContent>
           <Typography variant="body1" fontSize="medium" fontWeight="medium">
-            The <b>MARFA</b> tool is described in detail in the following preprint:
+            The <b>MARFA</b> tool is described in detail in the following published article:
             <br />
             <>
               <Typography variant={"body1"} fontSize={"medium"} fontWeight={"small"}>
                 Razumovskiy Mikhail, Boris Fomin, and Denis Astanin.
               </Typography>
               <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}>
-                <a href={"https://arxiv.org/abs/2411.03418"} target={"_blank"}>
+                <a href={"https://www.sciencedirect.com/science/article/abs/pii/S0022407325002614"} target={"_blank"}>
                   "MARFA: An Effective Line-by-line Tool for Calculating Absorption Coefficients and Cross-sections in
                   Planetary Atmospheres."
                 </a>{" "}
-                arXiv preprint arXiv:2411.03418 (2024).
+                Journal of Quantitative Spectroscopy and Radiative Transfer (2025).
               </Typography>
             </>
           </Typography>
@@ -77,6 +77,7 @@ export const ProjectInfo = () => {
                 <a href="https://github.com/DisaAst" target="_blank" rel="noopener noreferrer">
                   https://github.com/DisaAst
                 </a>
+                , densof161922@gmail.com
               </li>
             </ul>
           </Typography>

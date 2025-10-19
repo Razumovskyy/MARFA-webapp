@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { CircularProgress, Typography, useTheme } from "@mui/material"
+import { CircularProgress, Typography, useTheme, createFilterOptions } from "@mui/material"
 import { Control, Controller, FieldValues, FormProvider, useForm } from "react-hook-form"
 import {
   getSpectre, calculateSpectreParamsType, formDataToRequestMapper,
@@ -25,6 +25,16 @@ export const CalculateSpectre = () => {
 
   const [showCO2Fields, setShowCO2Fields] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // Custom filter for species search that allows searching with regular numbers (H2, CO2)
+  // even though the labels use subscript numbers (H₂, CO₂)
+  const filterMoleculeOptions = createFilterOptions({
+    matchFrom: 'any',
+    stringify: (option: any) => {
+      // Search in both the label (with subscripts) and value (with regular numbers)
+      return option ? `${option.label || ''} ${option.value || ''}` : '';
+    },
+  })
 
   const {
     handleSubmit,
@@ -90,15 +100,16 @@ export const CalculateSpectre = () => {
               <Autocomplete
                 size={"medium"}
                 options={moleculeOptions}
-                label={"Select species"} xx
+                label={"Select species"}
                 onChange={(event, value) => {
-                  setShowCO2Fields(!!value && value["label"] === "CO2")
+                  setShowCO2Fields(!!value && value["label"] === "CO₂")
                   field.onChange(value)
                 }}
                 value={field.value}
                 style={{ width: theme.spacing(100) }}
                 error={!!errors.species}
                 errorMessage={errors.species?.message}
+                filterOptions={filterMoleculeOptions}
               />
             )}
           />
@@ -148,7 +159,7 @@ export const CalculateSpectre = () => {
                 value={field.value}
                 {...field}
                 style={{ width: theme.spacing(100) }}
-                label={"Line cut-off condition (e.g. 125 cm⁻¹)"}
+                label={"Line cut-off condition (e.g. 25 cm⁻¹)"}
                 variant={"outlined"}
                 error={!!errors.line_cut_off_condition}
                 helperText={errors.line_cut_off_condition?.message}
