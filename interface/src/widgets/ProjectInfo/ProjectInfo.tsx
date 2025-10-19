@@ -47,14 +47,14 @@ export const ProjectInfo = () => {
             <br />
             <>
               <Typography variant={"body1"} fontSize={"medium"} fontWeight={"small"}>
-                Razumovskiy Mikhail, Boris Fomin, and Denis Astanin.
+                Razumovskiy, M., Fomin, B., & Astanin, D. (2025).
+                <br/>
+                MARFA: An effective line-by-line tool for calculating molecular absorption in planetary atmospheres. Journal of Quantitative Spectroscopy and Radiative Transfer, 346, 109599.
               </Typography>
               <Typography variant={"body1"} fontSize={"medium"} fontWeight={"medium"}>
-                <a href={"https://www.sciencedirect.com/science/article/abs/pii/S0022407325002614"} target={"_blank"}>
-                  "MARFA: An Effective Line-by-line Tool for Calculating Absorption Coefficients and Cross-sections in
-                  Planetary Atmospheres."
+                <a href={"https://doi.org/10.1016/j.jqsrt.2025.109599"} target={"_blank"}>
+                  https://doi.org/10.1016/j.jqsrt.2025.109599
                 </a>{" "}
-                Journal of Quantitative Spectroscopy and Radiative Transfer (2025).
               </Typography>
             </>
           </Typography>
