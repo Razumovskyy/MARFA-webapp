@@ -26,7 +26,7 @@ variables:
     - name: docker:24-dind
   before_script:
     - docker info | sed -n '1,80p' | cat
-    - docker login "$REGISTRY_URL" -u token -p "$CONTAINER_REGISTRY_PASSWORD"
+    - echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
     - docker buildx create --use --name marfa-builder || docker buildx use marfa-builder
     - docker buildx inspect --bootstrap | cat
 
