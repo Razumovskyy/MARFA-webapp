@@ -20,6 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+  // theme hook impl
   const theme = useTheme
 
   return (
