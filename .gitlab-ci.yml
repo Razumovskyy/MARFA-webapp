@@ -13,8 +13,6 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
-  FRONTEND_CACHE: cr.selcloud.ru/marfa/marfa-frontend:cache
-  CORE_CACHE: cr.selcloud.ru/marfa/marfa-core:cache
 
 .docker-build-template:
   image: docker:24
@@ -38,8 +36,8 @@ build_frontend:
     - |
       docker buildx build \
         --push \
-        --cache-from type=registry,ref="$FRONTEND_CACHE" \
-        --cache-to type=registry,ref="$FRONTEND_CACHE",mode=max \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --cache-from type=registry,ref="$FRONTEND_IMAGE" \
         -f docker/prod/interface.Dockerfile \
         -t "$FRONTEND_IMAGE" \
         ./interface
@@ -57,8 +55,8 @@ build_core:
     - |
       docker buildx build \
         --push \
-        --cache-from type=registry,ref="$CORE_CACHE" \
-        --cache-to type=registry,ref="$CORE_CACHE",mode=max \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --cache-from type=registry,ref="$CORE_IMAGE" \
         -f docker/prod/core.Dockerfile -t "$CORE_IMAGE" .
 
 deploy:
