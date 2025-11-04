@@ -20,6 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+// test comment for testing gitlab-ci
   const theme = useTheme
 
   return (
