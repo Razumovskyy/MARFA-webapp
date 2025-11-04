@@ -27,10 +27,8 @@ variables:
   services:
     - name: docker:24-dind
   before_script:
-    - docker info | sed -n '1,80p' | cat
     - echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
     - docker buildx create --use --name marfa-builder || docker buildx use marfa-builder
-    - docker buildx inspect --bootstrap | cat
 
 build_frontend:
   stage: build
@@ -43,10 +41,12 @@ build_frontend:
   script:
     - >-
       docker buildx build \
-      --push \
-      --cache-from type=registry,ref="$FRONTEND_CACHE" \
-      --cache-to type=registry,ref="$FRONTEND_CACHE",mode=max \
-      -f docker/prod/interface.Dockerfile -t "$FRONTEND_IMAGE" ./interface
+        --push \
+        --cache-from type=registry,ref="$FRONTEND_CACHE" \
+        --cache-to type=registry,ref="$FRONTEND_CACHE",mode=max \
+        -f docker/prod/interface.Dockerfile \
+        -t "$FRONTEND_IMAGE" \
+        ./interface
 
 build_core:
   stage: build
@@ -60,10 +60,10 @@ build_core:
   script:
     - >-
       docker buildx build \
-      --push \
-      --cache-from type=registry,ref="$CORE_CACHE" \
-      --cache-to type=registry,ref="$CORE_CACHE",mode=max \
-      -f docker/prod/core.Dockerfile -t "$CORE_IMAGE" .
+        --push \
+        --cache-from type=registry,ref="$CORE_CACHE" \
+        --cache-to type=registry,ref="$CORE_CACHE",mode=max \
+        -f docker/prod/core.Dockerfile -t "$CORE_IMAGE" .
 
 deploy:
   stage: deploy
