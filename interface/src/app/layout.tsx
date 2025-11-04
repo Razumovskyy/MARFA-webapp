@@ -19,8 +19,7 @@ export default function RootLayout({
                                    }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-// test comment for testing gitlab-ci
+  
   const theme = useTheme
 
   return (

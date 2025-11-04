@@ -2,6 +2,10 @@ stages:
   - build
   - deploy
 
+workflow:
+  rules:
+    - if: "$CI_PIPELINE_SOURCE == 'push'"
+
 variables:
   REGISTRY_URL: cr.selcloud.ru
   FRONTEND_IMAGE: cr.selcloud.ru/marfa/marfa-frontend:latest
