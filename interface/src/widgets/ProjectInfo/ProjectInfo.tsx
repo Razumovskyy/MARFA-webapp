@@ -73,7 +73,7 @@ export const ProjectInfo = () => {
                 , mrazumovskyy@gmail.com
               </li>
               <li>
-                <b>Denis Astanin</b>, AI/Web engineer at Devstark:{" "}
+                <b>Denis Astanin</b>, full stack developer at Devstark:{" "}
                 <a href="https://github.com/DisaAst" target="_blank" rel="noopener noreferrer">
                   https://github.com/DisaAst
                 </a>
