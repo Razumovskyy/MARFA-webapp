@@ -88,6 +88,7 @@ deploy:
     - |
       ssh -p "$TEST_SERVER_PORT" "$TEST_USERNAME@$TEST_SERVER_IP" "
         cd ./marfa &&
+        echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USERNAME" --password-stdin "$REGISTRY_URL" &&
         docker pull $FRONTEND_IMAGE &&
         docker pull $CORE_IMAGE &&
         docker compose down &&
