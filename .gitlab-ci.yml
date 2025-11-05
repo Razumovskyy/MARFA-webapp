@@ -70,6 +70,7 @@ deploy:
     - job: build_core
       optional: true
   rules:
+    - when: never
     - if: "$CI_COMMIT_BRANCH == 'main'"
       changes:
         - interface/**/*
