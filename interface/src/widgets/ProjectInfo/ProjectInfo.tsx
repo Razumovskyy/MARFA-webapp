@@ -66,7 +66,7 @@ export const ProjectInfo = () => {
             This platform was developed by:
             <ul>
               <li>
-                <b>Mikhail Razumovskiy</b>, scientific researcher and web developer:{" "}
+                <b>Mikhail Razumovskiy</b>, planetary science researcher and developer:{" "}
                 <a href="https://github.com/Razumovskyy" target="_blank" rel="noopener noreferrer">
                   https://github.com/Razumovskyy
                 </a>

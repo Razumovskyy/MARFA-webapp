@@ -5,10 +5,7 @@ stages:
 workflow:
   rules:
     - if: "$CI_PIPELINE_SOURCE == 'push'"
-    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
-    - if: "$CI_PIPELINE_SOURCE == 'web'"
-    - if: "$CI_PIPELINE_SOURCE == 'schedule'"
-    - if: "$CI_PIPELINE_SOURCE == 'trigger'"
+    - if: '$CI_PIPELINE_SOURCE == "web"'
 
 variables:
   REGISTRY_URL: cr.selcloud.ru
@@ -25,10 +22,8 @@ variables:
   services:
     - name: docker:24-dind
   before_script:
-    - docker info | sed -n '1,80p' | cat
     - echo "$REGISTRY_PASSWORD" | docker login "$REGISTRY_URL" -u "$REGISTRY_USERNAME" --password-stdin
     - docker buildx create --use --name marfa-builder || docker buildx use marfa-builder
-    - docker buildx inspect --bootstrap | cat
 
 build_frontend:
   stage: build
@@ -39,7 +34,14 @@ build_frontend:
         - interface/**/*
         - docker/prod/interface.Dockerfile
   script:
-    - docker buildx build --push -f docker/prod/interface.Dockerfile -t "$FRONTEND_IMAGE" ./interface
+    - |
+      docker buildx build \
+        --push \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --cache-from type=registry,ref="$FRONTEND_IMAGE" \
+        -f docker/prod/interface.Dockerfile \
+        -t "$FRONTEND_IMAGE" \
+        ./interface
 
 build_core:
   stage: build
@@ -51,7 +53,12 @@ build_core:
         - api-server/**/*
         - docker/prod/core.Dockerfile
   script:
-    - docker buildx build --push -f docker/prod/core.Dockerfile -t "$CORE_IMAGE" .
+    - |
+      docker buildx build \
+        --push \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --cache-from type=registry,ref="$CORE_IMAGE" \
+        -f docker/prod/core.Dockerfile -t "$CORE_IMAGE" .
 
 deploy:
   stage: deploy
@@ -78,6 +85,12 @@ deploy:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - printf "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
-    - >-
-      ssh -p "$TEST_SERVER_PORT" "$TEST_USERNAME@$TEST_SERVER_IP"
-      "cd ./marfa && docker pull $FRONTEND_IMAGE && docker pull $CORE_IMAGE && docker compose down && docker compose up -d"
+    - |
+      ssh -p "$TEST_SERVER_PORT" "$TEST_USERNAME@$TEST_SERVER_IP" "
+        cd ./marfa &&
+        echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USERNAME" --password-stdin "$REGISTRY_URL" &&
+        docker pull $FRONTEND_IMAGE &&
+        docker pull $CORE_IMAGE &&
+        docker compose down &&
+        docker compose up -d
+      "
