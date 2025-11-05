@@ -71,14 +71,13 @@ deploy:
     - job: build_core
       optional: true
   rules:
-    - when: never
-#    - if: "$CI_COMMIT_BRANCH == 'main'"
-#      changes:
-#        - interface/**/*
-#        - docker/prod/interface.Dockerfile
-#        - core/**/*
-#        - api-server/**/*
-#        - docker/prod/core.Dockerfile
+    - if: "$CI_COMMIT_BRANCH == 'main'"
+      changes:
+        - interface/**/*
+        - docker/prod/interface.Dockerfile
+        - core/**/*
+        - api-server/**/*
+        - docker/prod/core.Dockerfile
   before_script:
     - apk add --no-cache openssh-client
     - eval "$(ssh-agent -s)"
@@ -87,5 +86,10 @@ deploy:
     - printf "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
     - |
-      ssh -p "$TEST_SERVER_PORT" "$TEST_USERNAME@$TEST_SERVER_IP"
-      "cd ./marfa && docker pull $FRONTEND_IMAGE && docker pull $CORE_IMAGE && docker compose down && docker compose up -d"
+      ssh -p "$TEST_SERVER_PORT" "$TEST_USERNAME@$TEST_SERVER_IP" "
+        cd ./marfa &&
+        docker pull $FRONTEND_IMAGE &&
+        docker pull $CORE_IMAGE &&
+        docker compose down &&
+        docker compose up -d
+      "
