@@ -12,25 +12,24 @@ MARFA (Molecular atmospheric Absorption with Rapid and Flexible Analysis) is a v
 volume absorption coefficients or monochromatic absorption cross-sections using initial spectroscopic data from spectral
 databases and atmospheric data from an external file.
 
-A <a href="https://marfa.app">web interface</a> accessible at <a href="https://marfa.app">marfa.app</a> has been
-developed
-enabling an immediate interaction with MARFA atmospheric absorption calculator. The client side is built using the
-Next.js framework, which supports server-side rendering to ensure quick site loading. On the server
-side, Django and Django Rest Framework backend frameworks are
-utilized — a highly scalable and extensible tool-kits, that offer robust built-in database support mechanisms and
-functionality for building Web APIs. Thus, the client and server communicate through a REST API, enabling fast and
-seamless data exchange. For the HTTP web server, Nginx is used, while PostgreSQL
-is used as a primary database for storing information about users requests.
+## Project links
 
-Integration between the backend and MARFA's Fortran core is achieved by leveraging Django's ViewSet to invoke
-external processes via Python's subprocess module python_subprocess. This was chosen instead of
-f2py module from the Numpy, becuase it was a need to separate Fortran and python layers of
-the application. These processes run fpm executables essential for MARFA's calculations. Upon completion, the Fortran
-code generates the resulting PT-tables files, which are stored on the server. After these files are processed, they are
-provided to the client with download links, allowing users to access their results. Frontend and backend parts of the
-application are hosted within docker containers, and the
-application source code is equipped with GitHub Actions CI/CD pipeline for automatic
-deployments to the server.
+- **Web application:** [marfa.app](https://marfa.app/)
+- **Published paper:** [M. Razumovskiy, B. Fomin, and D. Astanin, “MARFA: An effective line-by-line tool for calculating molecular absorption in planetary atmospheres,” JQSRT 346 (2025), 109599](https://doi.org/10.1016/j.jqsrt.2025.109599)
+- **Canonical development repository:** [GitLab — venusrt/marfa/marfa-webapp](https://gitlab.com/venusrt/marfa/marfa-webapp)
+- **Public source mirror:** [GitHub — Razumovskyy/MARFA-webapp](https://github.com/Razumovskyy/MARFA-webapp)
+
+## Repository status and collaboration
+
+Development, code review, issue triage, and CI/CD are managed in the canonical GitLab repository. The GitHub repository is maintained as a public source mirror so that the code remains easy to discover, inspect, and fork. Changes to the default branch are integrated through GitLab rather than merged directly into the mirror.
+
+Scientific and software collaboration is welcome. If you would like to implement a feature, contribute code, or use MARFA-webapp in a joint project, please contact [Mikhail Razumovskiy](https://github.com/Razumovskyy) at [mrazumovskyy@gmail.com](mailto:mrazumovskyy@gmail.com) before beginning substantial work. We can agree on the scope and arrange access to the canonical GitLab project. GitHub pull requests may also be used as initial proposals and will be transferred to GitLab for review and integration.
+
+## Architecture
+
+The [web interface](https://marfa.app/) provides direct access to the MARFA atmospheric absorption calculator. The client is built with Next.js, while the server uses Django and Django REST Framework. The frontend and backend communicate through a REST API; Nginx serves HTTP traffic, and PostgreSQL stores information about user requests.
+
+The backend invokes MARFA's Fortran executables through Python's `subprocess` module. This keeps the Fortran calculation layer separate from the Python web layer. Completed calculations generate PT-table files on the server, which are processed and exposed to users through download links. The frontend, backend, and calculation components run in Docker containers, and deployments are managed through the GitLab CI/CD pipeline.
 
 ## 1. Installing Fortran
 
