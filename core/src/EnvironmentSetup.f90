@@ -156,7 +156,11 @@ contains
         write(infoUnit, '(A,A)') 'Cut Off: ', trim(cutOffclaTrimmed)
         write(infoUnit, '(A,E12.5)') 'Pressure (atm): ', pressure
         write(infoUnit, '(A,F6.2)') 'Temperature (K): ', temperature
-        write(infoUnit, '(A,E12.5)') 'Number density (cm^{-2}*km^{-1}): ', density
+        if (isVAC) then
+            write(infoUnit, '(A,E12.5)') 'Number density (cm^{-2}*km^{-1}): ', density
+        else
+            write(infoUnit, '(A)') 'Broadening assumption: air; trace-gas limit (p_self = 0)'
+        end if
         close(infoUnit)
     end subroutine initialiseLogFiles
 

@@ -22,6 +22,7 @@ export const CalculateSpectre = () => {
     defaultValues: initialFormValues,
     resolver: yupResolver(moleculeSpectreValidationSchema),
   })
+  const selectedTargetValue = methods.watch("target_value")
 
   const [showCO2Fields, setShowCO2Fields] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -214,6 +215,10 @@ export const CalculateSpectre = () => {
               />
             )}
           />
+          {selectedTargetValue?.value === "ACS" &&
+            <Typography variant={"caption"} sx={{ color: "text.secondary", width: theme.spacing(100) }}>
+              Air broadening in the trace-gas limit (p_self = 0).
+            </Typography>}
           <Controller
             name="density"
             control={control as Control<FieldValues>}
